@@ -142,7 +142,8 @@ export function MicRing({ value, size, stroke, color, track, textColor, label = 
 export function infoRows(d: CardData) {
   return [
     { key: "x", label: "X", ja: "X", value: d.xId ? (d.xId.startsWith("@") ? d.xId : `@${d.xId}`) : "" },
-    { key: "time", label: "Active", ja: "いる時間", value: d.activeTime },
+    { key: "weekday", label: "Weekday", ja: "平日", value: d.activeTime },
+    { key: "holiday", label: "Holiday", ja: "休日", value: d.activeHoliday },
     { key: "fav", label: "Favorite", ja: "すきなもの", value: d.favorites },
   ].filter((r) => r.value.trim());
 }

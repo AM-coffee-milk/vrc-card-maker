@@ -30,7 +30,10 @@ export interface CardData {
   photoMode: boolean;
   name: string;
   xId: string;
+  /** 平日のいる時間 */
   activeTime: string;
+  /** 休日のいる時間 */
+  activeHoliday: string;
   favorites: string;
   bio: string;
   platforms: string[];
@@ -123,6 +126,7 @@ export function defaultCard(): CardData {
     name: "",
     xId: "",
     activeTime: "",
+    activeHoliday: "",
     favorites: "",
     bio: "",
     platforms: ["PCVR"],

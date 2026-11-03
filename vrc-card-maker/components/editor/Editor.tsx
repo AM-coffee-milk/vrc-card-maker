@@ -206,11 +206,16 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
           <input className={inputClass} value={data.name} maxLength={24} onChange={(e) => set({ name: e.target.value })} placeholder="VRChat での名前" />
         </Field>
         <div className="grid grid-cols-2 gap-2">
-          <Field label="X (Twitter) ID">
-            <input className={inputClass} value={data.xId} maxLength={32} onChange={(e) => set({ xId: e.target.value })} placeholder="@your_id" />
+          <div className="col-span-2">
+            <Field label="X (Twitter) ID">
+              <input className={inputClass} value={data.xId} maxLength={32} onChange={(e) => set({ xId: e.target.value })} placeholder="@your_id" />
+            </Field>
+          </div>
+          <Field label="いる時間 (平日)">
+            <input className={inputClass} value={data.activeTime} maxLength={24} onChange={(e) => set({ activeTime: e.target.value })} placeholder="22時〜25時" />
           </Field>
-          <Field label="よくいる時間">
-            <input className={inputClass} value={data.activeTime} maxLength={32} onChange={(e) => set({ activeTime: e.target.value })} placeholder="平日22時〜" />
+          <Field label="いる時間 (休日)">
+            <input className={inputClass} value={data.activeHoliday} maxLength={24} onChange={(e) => set({ activeHoliday: e.target.value })} placeholder="昼からずっと" />
           </Field>
           <div className="col-span-2">
             <Field label="好きなもの">
