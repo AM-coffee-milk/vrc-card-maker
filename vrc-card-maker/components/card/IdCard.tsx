@@ -97,7 +97,7 @@ export default function IdCard() {
       <div className="font-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: alpha(text, 0.5) }}>
         Remarks / 自己紹介
       </div>
-      <FitText max={14} min={10} className="flex-1 font-medium leading-[1.6]">
+      <FitText max={14} min={10} className="w-full flex-1 font-medium leading-[1.6]">
         {data.bio || "Hello VRChat!"}
       </FitText>
     </div>
@@ -164,12 +164,11 @@ export default function IdCard() {
           </div>
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
             <Field label="Name" ja="名前" value={data.name} color={text} big />
-            <div className="grid grid-cols-2 gap-x-5 gap-y-3">
+            {/* 自己紹介の高さを確保するため 1 行に並べる */}
+            <div className="grid grid-cols-3 gap-x-4">
               <Field label="X" ja="アカウント" value={xId} color={text} />
               <Field label="Active" ja="いる時間" value={data.activeTime} color={text} />
-              <div className="col-span-2">
-                <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
-              </div>
+              <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
             </div>
             {remarks}
             {permissions}
