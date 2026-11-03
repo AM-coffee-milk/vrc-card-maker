@@ -100,7 +100,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: "idcard",
     name: "ID CARD",
-    description: "身分証風のきっちり系",
+    description: "カード型のきっちり系",
     palettes: [
       { name: "Classic", bg: "#f3f1ea", accent: "#1f3a5f", text: "#1b1f27" },
       { name: "Cyber", bg: "#0d1117", accent: "#00e0b0", text: "#d7e2ee" },

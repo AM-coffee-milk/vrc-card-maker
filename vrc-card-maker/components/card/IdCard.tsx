@@ -1,6 +1,6 @@
 "use client";
 
-// ID CARD: 身分証風のきっちり系
+// ID CARD: カード型のきっちり系
 
 import { STATUS_INFO, STATUS_ORDER, alpha, contrastOn, micText } from "@/lib/card";
 import { FitText, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
@@ -132,8 +132,8 @@ export default function IdCard() {
             V
           </span>
           <div className="leading-tight">
-            <div className={`font-mono font-medium tracking-[0.22em] ${portrait ? "text-[13px]" : "text-[15px]"}`}>VRCHAT IDENTIFICATION CARD</div>
-            <div className="text-[10px] font-bold tracking-[0.3em] opacity-80">仮想世界住民証</div>
+            <div className={`font-mono font-medium tracking-[0.22em] ${portrait ? "text-[13px]" : "text-[15px]"}`}>VRCHAT PROFILE CARD</div>
+            <div className="text-[10px] font-bold tracking-[0.3em] opacity-80">プロフィールカード</div>
           </div>
         </div>
         {!portrait && <div className="font-mono text-[13px] tracking-widest opacity-90">No. {serial}</div>}
