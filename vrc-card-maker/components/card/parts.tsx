@@ -2,7 +2,7 @@
 
 // テンプレート間で共有するカードの部品
 
-import { createContext, useContext, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { createContext, useContext, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { ImageIcon } from "lucide-react";
 import { FRIEND_INFO, STATUS_INFO, STATUS_ORDER, micText, type CardData, type PhotoFrame, type Status, type Tag } from "@/lib/card";
 
@@ -20,32 +20,67 @@ export function useCard() {
   return ctx;
 }
 
-/** トリミング位置・ズームを反映した写真。カードとトリミング画面で同じ見え方にするため共通化している */
-export function FramedImg({ src, frame, className = "" }: { src: string; frame: PhotoFrame; className?: string }) {
+/**
+ * トリミング位置・ズームを反映した写真。カードとトリミング画面で同じ見え方にするため共通化している。
+ * object-fit: cover だと枠で切り抜いてから縮小されるため、ズーム 1 未満で写真全体を見せられない。
+ * そこで写真の縦横比から大きさと位置を直接計算して置く (枠の大きさはコンテナクエリの cqw / cqh で参照)。
+ *   表示幅 = max(枠の幅, 枠の高さ × 縦横比) × ズーム、左端 = (枠の幅 - 表示幅) × 位置%
+ */
+export function FramedImg({ src, frame }: { src: string; frame: PhotoFrame }) {
   const { x, y, zoom } = frame;
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState<{ src: string; ratio: number } | null>(null);
+  const ratio = loaded?.src === src ? loaded.ratio : null;
+  const measure = () => {
+    const img = imgRef.current;
+    if (img?.naturalWidth && img.naturalHeight) setLoaded({ src, ratio: img.naturalWidth / img.naturalHeight });
+  };
+  // 読み込み済み (キャッシュ) の場合は onLoad が来ないことがあるので、描画時にも確かめる
+  useLayoutEffect(() => {
+    if (!ratio && imgRef.current?.complete) measure();
+  });
+
+  // 縦横比が分かるまでは枠いっぱいに表示しておく
+  const style: CSSProperties = ratio
+    ? (() => {
+        const w = `max(100cqw, 100cqh * ${ratio}) * ${zoom}`;
+        const h = `${w} / ${ratio}`;
+        return { width: `calc(${w})`, height: `calc(${h})`, left: `calc((100cqw - ${w}) * ${x / 100})`, top: `calc((100cqh - ${h}) * ${y / 100})` };
+      })()
+    : { inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: `${x}% ${y}%` };
+
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt=""
-      draggable={false}
-      className={`pointer-events-none h-full w-full select-none object-cover ${className}`}
-      style={{ objectPosition: `${x}% ${y}%`, transform: `scale(${zoom})`, transformOrigin: `${x}% ${y}%` }}
-    />
+    <div className="pointer-events-none relative h-full w-full overflow-hidden" style={{ containerType: "size" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img ref={imgRef} src={src} alt="" draggable={false} onLoad={measure} className="absolute max-w-none select-none" style={style} />
+    </div>
   );
 }
 
-/** ドラッグ量 (枠の幅・高さに対する px) をトリミング位置に換算する。ズーム時は細かく動く */
-export function panFrame(frame: PhotoFrame, dx: number, dy: number, w: number, h: number): PhotoFrame {
-  const k = (100 / Math.max(frame.zoom, 1)) * 1.5;
-  const clamp = (v: number) => Math.round(Math.min(100, Math.max(0, v)) * 10) / 10;
-  return { ...frame, x: clamp(frame.x - (dx / w) * k), y: clamp(frame.y - (dy / h) * k) };
+/**
+ * ドラッグ量 (px) をトリミング位置に換算し、写真が指にぴったり付いてくるようにする。
+ * FramedImg では写真の左端が -位置% × (表示サイズ - 枠) になる。
+ * 縦長・横長の写真でははみ出す量が大きく違うので、写真の実寸 (natural) から求める。
+ */
+export function panFrame(frame: PhotoFrame, dx: number, dy: number, box: { w: number; h: number }, natural: { w: number; h: number }): PhotoFrame {
+  const cover = Math.max(box.w / natural.w, box.h / natural.h);
+  const move = (pos: number, d: number, imgSize: number, boxSize: number) => {
+    const extra = imgSize * cover * frame.zoom - boxSize; // 枠からはみ出す量 (縮小時は負)
+    if (Math.abs(extra) < 1) return pos;
+    return Math.round(Math.min(100, Math.max(0, pos - (d / extra) * 100)) * 10) / 10;
+  };
+  return { ...frame, x: move(frame.x, dx, natural.w, box.w), y: move(frame.y, dy, natural.h, box.h) };
+}
+
+/** 新しく選んだ写真の初期位置。縦長の写真は顔が上の方にあることが多いので上寄せにする */
+export function initialFrame(natural: { w: number; h: number }): PhotoFrame {
+  return { x: 50, y: natural.h > natural.w * 1.1 ? 25 : 50, zoom: 1 };
 }
 
 /** メイン写真。位置・ズームを反映し、プレビューではドラッグで動かせる */
 export function MainPhoto({ className = "", placeholderColor }: { className?: string; placeholderColor?: string }) {
   const { data, onPhotoChange } = useCard();
-  const drag = useRef<{ px: number; py: number; frame: PhotoFrame; w: number; h: number } | null>(null);
+  const drag = useRef<{ px: number; py: number; frame: PhotoFrame; box: { w: number; h: number }; natural: { w: number; h: number } } | null>(null);
 
   if (!data.mainImage) {
     return (
@@ -59,13 +94,15 @@ export function MainPhoto({ className = "", placeholderColor }: { className?: st
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!onPhotoChange) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    drag.current = { px: e.clientX, py: e.clientY, frame: data.photo, w: rect.width, h: rect.height };
+    const img = e.currentTarget.querySelector("img");
+    if (!img?.naturalWidth) return;
+    drag.current = { px: e.clientX, py: e.clientY, frame: data.photo, box: { w: rect.width, h: rect.height }, natural: { w: img.naturalWidth, h: img.naturalHeight } };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
     if (!d || !onPhotoChange) return;
-    onPhotoChange(panFrame(d.frame, e.clientX - d.px, e.clientY - d.py, d.w, d.h));
+    onPhotoChange(panFrame(d.frame, e.clientX - d.px, e.clientY - d.py, d.box, d.natural));
   };
   const onPointerUp = () => {
     drag.current = null;

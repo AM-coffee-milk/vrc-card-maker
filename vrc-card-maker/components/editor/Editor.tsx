@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Crop, ImagePlus, Plus, RotateCcw, Trash2, X } from "lucide-react";
-import { DEFAULT_FRAME, FRIEND_INFO, PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, micText, newId, type CardData, type PhotoFrame, type Status, type TemplateId } from "@/lib/card";
+import { FRIEND_INFO, PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, micText, newId, type CardData, type PhotoFrame, type Status, type TemplateId } from "@/lib/card";
 import { fileToDataUrl } from "@/lib/image";
-import { FramedImg } from "@/components/card/parts";
+import { FramedImg, initialFrame } from "@/components/card/parts";
 import CropDialog from "./CropDialog";
 import { Check, Field, Section, Slider, Toggle, inputClass } from "./ui";
 
@@ -73,10 +73,18 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
   const [cropping, setCropping] = useState<{ slot: number; aspect: number } | null>(null);
   const template = TEMPLATES.find((t) => t.id === data.template) ?? TEMPLATES[0];
 
-  const loadImage = async (file: File, apply: (url: string) => void, max: number) => {
+  const loadImage = async (file: File, apply: (url: string, frame: PhotoFrame) => void, max: number) => {
     setLoadingImage(true);
     try {
-      apply(await fileToDataUrl(file, max));
+      const url = await fileToDataUrl(file, max);
+      // decode() は非表示のタブで止まることがあるので onload で待つ
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve(el);
+        el.onerror = () => reject(new Error("画像を読み込めませんでした"));
+        el.src = url;
+      });
+      apply(url, initialFrame({ w: img.naturalWidth, h: img.naturalHeight }));
     } catch (e) {
       alert(e instanceof Error ? e.message : "画像を読み込めませんでした");
     } finally {
@@ -193,7 +201,7 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
           frame={data.photo}
           label="Main Photo +"
           className="h-28"
-          onFile={(f) => loadImage(f, (url) => set({ mainImage: url, photo: { ...DEFAULT_FRAME } }), 1800)}
+          onFile={(f) => loadImage(f, (url, photo) => set({ mainImage: url, photo }), 1800)}
           onClear={() => set({ mainImage: null })}
           onCrop={() => openCrop(-1)}
         />
@@ -208,7 +216,7 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
                 label={`Sub ${i + 1}`}
                 className="h-16"
                 onFile={(f) =>
-                  loadImage(f, (url) => update((d) => ({ ...d, subImages: d.subImages.map((s, j) => (j === i ? url : s)), subFrames: d.subFrames.map((fr, j) => (j === i ? { ...DEFAULT_FRAME } : fr)) })), 900)
+                  loadImage(f, (url, frame) => update((d) => ({ ...d, subImages: d.subImages.map((s, j) => (j === i ? url : s)), subFrames: d.subFrames.map((fr, j) => (j === i ? frame : fr)) })), 900)
                 }
                 onClear={() => update((d) => ({ ...d, subImages: d.subImages.map((s, j) => (j === i ? null : s)) }))}
                 onCrop={() => openCrop(i)}

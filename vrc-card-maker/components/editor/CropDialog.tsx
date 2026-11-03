@@ -10,13 +10,15 @@ import { FramedImg, panFrame } from "@/components/card/parts";
 import { Slider } from "./ui";
 
 export default function CropDialog({ title, src, frame, aspect, onChange, onClose }: { title: string; src: string; frame: PhotoFrame; aspect: number; onChange: (frame: PhotoFrame) => void; onClose: () => void }) {
-  const drag = useRef<{ px: number; py: number; frame: PhotoFrame; w: number; h: number } | null>(null);
+  const drag = useRef<{ px: number; py: number; frame: PhotoFrame; box: { w: number; h: number } } | null>(null);
   // ズーム 1 は枠いっぱいに切り抜いた状態。それより小さくすると写真全体が見えるところまで縮められる
   const [minZoom, setMinZoom] = useState(1);
+  const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
 
   useEffect(() => {
     const img = new Image();
     img.onload = () => {
+      setNatural({ w: img.naturalWidth, h: img.naturalHeight });
       const ratio = img.naturalWidth / img.naturalHeight;
       setMinZoom(Math.floor((Math.min(ratio, aspect) / Math.max(ratio, aspect)) * 100) / 100);
     };
@@ -30,13 +32,14 @@ export default function CropDialog({ title, src, frame, aspect, onChange, onClos
   }, [onClose]);
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!natural) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    drag.current = { px: e.clientX, py: e.clientY, frame, w: rect.width, h: rect.height };
+    drag.current = { px: e.clientX, py: e.clientY, frame, box: { w: rect.width, h: rect.height } };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
-    if (d) onChange(panFrame(d.frame, e.clientX - d.px, e.clientY - d.py, d.w, d.h));
+    if (d && natural) onChange(panFrame(d.frame, e.clientX - d.px, e.clientY - d.py, d.box, natural));
   };
   const onPointerUp = () => {
     drag.current = null;
