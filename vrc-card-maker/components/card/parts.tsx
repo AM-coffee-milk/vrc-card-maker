@@ -138,38 +138,41 @@ export function MicRing({ value, size, stroke, color, track, textColor, label = 
   );
 }
 
-/** 入力済みのプロフィール項目 */
+/** 入力済みのプロフィール項目。wide は横幅いっぱいに使う (好きなものは長くなりやすい) */
 export function infoRows(d: CardData) {
   return [
-    { key: "x", label: "X", ja: "X", value: d.xId ? (d.xId.startsWith("@") ? d.xId : `@${d.xId}`) : "" },
-    { key: "weekday", label: "Weekday", ja: "平日", value: d.activeTime },
-    { key: "holiday", label: "Holiday", ja: "休日", value: d.activeHoliday },
-    { key: "fav", label: "Favorite", ja: "すきなもの", value: d.favorites },
+    { key: "x", label: "X", ja: "X", value: d.xId ? (d.xId.startsWith("@") ? d.xId : `@${d.xId}`) : "", wide: true },
+    { key: "weekday", label: "Weekday", ja: "平日", value: d.activeTime, wide: false },
+    { key: "holiday", label: "Holiday", ja: "休日", value: d.activeHoliday, wide: false },
+    { key: "fav", label: "Favorite", ja: "すきなもの", value: d.favorites, wide: true },
   ].filter((r) => r.value.trim());
 }
 
 /**
  * 名前の横に押す、フレンド申請の判子。
- * 色の見分けに頼らないよう、文字はカードの背景色の上に文字色で書く (配色で一番コントラストが取れる組み合わせ)。
- * アクセント色の上に置くときは onAccent を付けて枠も文字色にする。
+ * 色の見分けに頼らないよう、文字と枠はカードの背景色と文字色だけで描く (配色で一番コントラストが取れる組み合わせ)。
+ * アクセント色は影の飾りにだけ使う。アクセント色の上に置くときは onAccent を付けて影を消す。
+ * 横に余裕がある場所では oneLine で改行せず、高さを抑える。
  */
-export function FriendStamp({ onAccent = false, className = "" }: { onAccent?: boolean; className?: string }) {
+export function FriendStamp({ onAccent = false, oneLine = false, className = "" }: { onAccent?: boolean; oneLine?: boolean; className?: string }) {
   const { data } = useCard();
   if (data.friend === "none") return null;
   const { bg, accent, text } = data.colors;
-  const line = onAccent ? text : accent;
   return (
     <div
-      className={`pointer-events-none flex shrink-0 rotate-[-6deg] flex-col items-center rounded-lg px-2.5 py-1 text-center ${className}`}
-      style={{ background: bg, color: text, border: `3px double ${line}` }}
+      className={`pointer-events-none flex shrink-0 rotate-[-6deg] flex-col overflow-hidden rounded-lg text-center ${className}`}
+      style={{ background: bg, color: text, border: `2.5px solid ${text}`, boxShadow: onAccent ? undefined : `3px 3px 0 ${accent}` }}
     >
-      <span className="text-[12px] font-bold leading-tight">フレンド申請</span>
-      <span className="my-[2px] h-px w-full" style={{ background: line }} />
-      {FRIEND_INFO[data.friend].stamp.map((line) => (
-        <span key={line} className="whitespace-nowrap text-[17px] font-black leading-tight">
-          {line}
-        </span>
-      ))}
+      <span className="px-2.5 py-[1px] text-[12px] font-black leading-tight tracking-wider" style={{ background: text, color: bg }}>
+        フレンド申請
+      </span>
+      <span className="flex flex-col px-2.5 pb-1 pt-[3px]">
+        {(oneLine ? [FRIEND_INFO[data.friend].label] : FRIEND_INFO[data.friend].stamp).map((line) => (
+          <span key={line} className="whitespace-nowrap text-[18px] font-black leading-tight">
+            {line}
+          </span>
+        ))}
+      </span>
     </div>
   );
 }

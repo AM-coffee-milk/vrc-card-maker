@@ -148,7 +148,7 @@ export default function IdCard() {
             <div className="text-[10px] font-bold tracking-[0.3em] opacity-80">プロフィールカード</div>
           </div>
         </div>
-        {portrait ? <FriendStamp onAccent className="scale-90" /> : <div className="font-mono text-[13px] tracking-widest opacity-90">No. {serial}</div>}
+        {portrait ? <FriendStamp onAccent oneLine className="scale-90" /> : <div className="font-mono text-[13px] tracking-widest opacity-90">No. {serial}</div>}
       </div>
 
       {portrait ? (

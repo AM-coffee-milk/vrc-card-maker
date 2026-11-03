@@ -60,19 +60,36 @@ export default function StreetCard() {
       {/* 内容エリア */}
       <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${portrait ? "gap-5 px-9 py-8" : "gap-[18px] px-9 py-8"}`}>
         {(rows.length > 0 || data.friend !== "none") && (
-          <div className="flex items-center gap-5">
-            <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-6 gap-y-2.5">
-              {rows.map((r) => (
-                <div key={r.key} className="min-w-0">
-                  <div className="font-oswald text-[11px] font-bold uppercase italic tracking-[0.2em]" style={{ color: alpha(text, 0.55) }}>
-                    {r.label}
+          <div className="flex flex-col gap-2.5">
+            <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-x-5">
+              {rows
+                .filter((r) => r.key !== "fav")
+                .map((r) => (
+                  <div key={r.key} className="min-w-0">
+                    <div className="font-oswald text-[11px] font-bold uppercase italic tracking-[0.2em]" style={{ color: alpha(text, 0.55) }}>
+                      {r.label}
+                    </div>
+                    <div className="truncate text-[15px] font-bold leading-snug">{r.value}</div>
                   </div>
-                  <div className="truncate text-[15px] font-bold leading-snug">{r.value}</div>
-                </div>
-              ))}
+                ))}
             </div>
-            {/* 写真にかぶせないよう、プロフィール欄の右に押す */}
-            <FriendStamp />
+            {(data.favorites.trim() || data.friend !== "none") && (
+              <div className="flex items-center gap-5">
+                {/* 好きなものは長くなりやすいので 2 行まで折り返す */}
+                <div className="min-w-0 flex-1">
+                  {data.favorites.trim() && (
+                    <>
+                      <div className="font-oswald text-[11px] font-bold uppercase italic tracking-[0.2em]" style={{ color: alpha(text, 0.55) }}>
+                        Favorite
+                      </div>
+                      <div className="line-clamp-2 text-[15px] font-bold leading-snug">{data.favorites}</div>
+                    </>
+                  )}
+                </div>
+                {/* 写真にかぶせないよう、プロフィール欄の右に押す */}
+                <FriendStamp oneLine />
+              </div>
+            )}
           </div>
         )}
 

@@ -56,7 +56,7 @@ export default function PopCard() {
             <span className="font-maru text-[11px] font-bold">{micText(data.mic)}</span>
           </span>
         )}
-        <FriendStamp className="-my-1" />
+        <FriendStamp oneLine={portrait} className="mt-1.5" />
       </div>
     </div>
   );
@@ -77,7 +77,7 @@ export default function PopCard() {
 
       {/* 写真と名前 */}
       <div className={`flex shrink-0 flex-col gap-4 ${portrait ? "w-full" : "w-[350px]"}`}>
-        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[264px]" : "h-[360px]") : "h-[340px]"}`}>
+        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[226px]" : "h-[316px]") : "h-[340px]"}`}>
           <div className="absolute inset-0 rotate-[-2deg] rounded-[30px] bg-white p-2.5" style={{ boxShadow: `0 10px 0 ${alpha(accent, 0.35)}` }}>
             <MainPhoto className="h-full w-full rounded-[22px]" placeholderColor={alpha(text, 0.35)} />
           </div>
@@ -91,11 +91,11 @@ export default function PopCard() {
         {rows.length > 0 && (
           <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
             {rows.map((r) => (
-              <div key={r.key} className="flex min-w-0 items-center gap-2">
-                <span className="shrink-0 rounded-full px-2.5 py-[2px] font-maru text-[11px] font-bold" style={{ background: alpha(accent, 0.18), color: accent }}>
+              <div key={r.key} className={`flex min-w-0 items-start gap-2 ${r.wide ? "col-span-2" : ""}`}>
+                <span className="mt-[1px] shrink-0 rounded-full px-2.5 py-[2px] font-maru text-[11px] font-bold" style={{ background: alpha(accent, 0.18), color: accent }}>
                   {r.ja}
                 </span>
-                <span className="truncate font-maru text-[15px] font-bold">{r.value}</span>
+                <span className={`font-maru text-[15px] font-bold ${r.key === "fav" ? "line-clamp-2" : "truncate"}`}>{r.value}</span>
               </div>
             ))}
           </div>
