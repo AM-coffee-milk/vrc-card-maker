@@ -2,9 +2,8 @@
 
 // POP: まるっとかわいいパステル系
 
-import { Mic } from "lucide-react";
 import { STATUS_INFO, alpha, contrastOn, micText } from "@/lib/card";
-import { FitText, FriendStamp, MainPhoto, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
+import { FitText, FriendStamp, MainPhoto, MicMeter, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function Sparkle({ size, color, className = "" }: { size: number; color: string; className?: string }) {
   return (
@@ -33,41 +32,46 @@ export default function PopCard() {
   // 文字色が暗ければ白いパネル、明るければ暗いパネル
   const panel = contrastOn(text) === "#ffffff" ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.35)";
 
+  const platforms = data.platforms.length > 0 && (
+    <div className="flex min-w-0 flex-1 flex-wrap gap-2">
+      {data.platforms.map((p) => (
+        <span key={p} className="rounded-full px-3 py-[2px] font-maru text-[14px] font-bold" style={{ background: accent, color: contrastOn(accent) }}>
+          {p}
+        </span>
+      ))}
+    </div>
+  );
+  const mic = data.showMic && <MicMeter value={data.mic} color={accent} track={alpha(accent, 0.2)} className="rounded-2xl px-3 py-2 font-maru" style={{ background: panel, color: text }} />;
+
+  // マイクとスタンプは重ならないよう同じ行に並べる (横向きは幅が狭いのでプラットフォームを別の行にする)
   const nameBlock = (
     <div className="pointer-events-none flex min-w-0 flex-col gap-2">
-      <div className="flex items-center gap-3">
-        <h2 className="min-w-0 flex-1 truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
-          {data.name || "なまえ"}
-        </h2>
-        {/* 縦向きは高さを写真に回したいので、スタンプは名前の横に置く */}
-        {portrait && <FriendStamp oneLine className="-my-2" />}
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="flex min-w-0 flex-1 flex-wrap gap-2">
-          {data.platforms.map((p) => (
-            <span key={p} className="rounded-full px-3 py-[2px] font-maru text-[12px] font-bold" style={{ background: accent, color: contrastOn(accent) }}>
-              {p}
-            </span>
-          ))}
+      <h2 className="truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
+        {data.name || "なまえ"}
+      </h2>
+      {portrait ? (
+        <div className="flex items-center gap-3">
+          {platforms || <div className="flex-1" />}
+          {mic}
+          <FriendStamp oneLine />
         </div>
-        {data.showMic && (
-          <span className="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-[3px]" style={{ background: panel, color: text }}>
-            <Mic size={13} strokeWidth={2.5} color={accent} />
-            <span className="font-maru text-[11px] font-bold">ON</span>
-            <span className="relative h-[6px] w-[54px] overflow-hidden rounded-full" style={{ background: alpha(accent, 0.2) }}>
-              <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${data.mic}%`, background: accent }} />
-            </span>
-            <span className="font-maru text-[11px] font-bold">{micText(data.mic)}</span>
-          </span>
-        )}
-        {!portrait && <FriendStamp className="mt-1.5" />}
-      </div>
+      ) : (
+        <>
+          {platforms}
+          {(mic || data.friend !== "none") && (
+            <div className="flex items-center justify-between gap-3">
+              {mic}
+              <FriendStamp oneLine />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 
   return (
     <div
-      className={`relative flex h-full w-full overflow-hidden ${portrait ? "flex-col gap-4 rounded-[48px] p-6" : "flex-row gap-7 rounded-[40px] p-7"}`}
+      className={`relative flex h-full w-full overflow-hidden ${portrait ? "flex-col gap-3 rounded-[48px] p-6" : "flex-row gap-7 rounded-[40px] p-7"}`}
       style={{
         backgroundColor: bg,
         backgroundImage: `radial-gradient(${alpha(accent, 0.22)} 2px, transparent 2.6px)`,
@@ -82,7 +86,7 @@ export default function PopCard() {
 
       {/* 写真と名前 */}
       <div className={`flex shrink-0 flex-col gap-4 ${portrait ? "w-full" : "w-[350px]"}`}>
-        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[310px]" : "h-[400px]") : "h-[340px]"}`}>
+        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[310px]" : "h-[400px]") : "h-[322px]"}`}>
           <div className="absolute inset-0 rotate-[-2deg] rounded-[30px] bg-white p-2.5" style={{ boxShadow: `0 10px 0 ${alpha(accent, 0.35)}` }}>
             <MainPhoto className="h-full w-full rounded-[22px]" placeholderColor={alpha(text, 0.35)} />
           </div>

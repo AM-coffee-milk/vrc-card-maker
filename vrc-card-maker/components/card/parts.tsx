@@ -120,19 +120,16 @@ export function usedStatuses(tags: Tag[]) {
   return STATUS_ORDER.filter((s) => tags.some((t) => t.status === s && t.label.trim()));
 }
 
-/** 円形のマイク ON 率メーター */
-export function MicRing({ value, size, stroke, color, track, textColor, label = true }: { value: number; size: number; stroke: number; color: string; track: string; textColor: string; label?: boolean }) {
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
+/** マイク ON 率。何の数字か分かるよう日本語のラベルと大きな数値で出す (バーは飾り) */
+export function MicMeter({ value, color, track, className = "", style }: { value: number; color: string; track: string; className?: string; style?: CSSProperties }) {
   return (
-    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
-      <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
-        <circle cx={size / 2} cy={size / 2} r={r} stroke={track} strokeWidth={stroke} fill="none" />
-        <circle cx={size / 2} cy={size / 2} r={r} stroke={color} strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={c * (1 - value / 100)} strokeLinecap="round" />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center leading-none" style={{ color: textColor }}>
-        {label && <span className="font-mono text-[8px] tracking-wider opacity-70">MIC ON</span>}
-        <span className={`font-oswald font-bold ${value === 0 ? "text-[12px]" : "text-[15px]"}`}>{micText(value)}</span>
+    <div className={`flex shrink-0 flex-col gap-1 ${className}`} style={style}>
+      <span className="text-[12px] font-bold leading-none">マイクON率</span>
+      <div className="flex items-center gap-2">
+        <span className="relative h-[8px] w-[60px] overflow-hidden rounded-full" style={{ background: track }}>
+          <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${value}%`, background: color }} />
+        </span>
+        <span className="text-[18px] font-black leading-none">{micText(value)}</span>
       </div>
     </div>
   );

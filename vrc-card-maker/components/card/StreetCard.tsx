@@ -2,8 +2,8 @@
 
 // STREET: 写真を大きく見せるゲーミング系 (元デザインを踏襲)
 
-import { STATUS_INFO, alpha, contrastOn } from "@/lib/card";
-import { FitText, FriendStamp, MainPhoto, MicRing, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
+import { STATUS_INFO, alpha } from "@/lib/card";
+import { FitText, FriendStamp, MainPhoto, MicMeter, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function SectionLabel({ children, color, accent, right }: { children: string; color: string; accent: string; right?: React.ReactNode }) {
   return (
@@ -47,23 +47,22 @@ export default function StreetCard() {
         {/* 名前の帯 */}
         <div className="flex shrink-0 items-center gap-4 bg-neutral-950 px-9 py-3" style={{ borderLeft: `6px solid ${accent}` }}>
           <div className="pointer-events-none min-w-0 flex-1">
-            <h2 className="truncate font-oswald text-[34px] font-bold uppercase italic leading-[1.1] text-white">{data.name || "NAME"}</h2>
-            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-              <span className="-skew-x-12 px-2 py-[1px] font-oswald text-[10px] font-bold italic tracking-[0.25em]" style={{ background: accent, color: contrastOn(accent) }}>
-                VRC IDENTITY
-              </span>
-              {data.platforms.map((p) => (
-                <span key={p} className="rounded border border-white/30 px-2 py-[1px] font-mono text-[11px] uppercase tracking-wider text-white/90">
-                  {p}
-                </span>
-              ))}
-            </div>
+            <h2 className="truncate font-oswald text-[36px] font-bold uppercase italic leading-[1.1] text-white">{data.name || "NAME"}</h2>
+            {data.platforms.length > 0 && (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                {data.platforms.map((p) => (
+                  <span key={p} className="rounded-md px-2.5 py-[1px] text-[14px] font-bold text-white" style={{ border: `2px solid ${accent}` }}>
+                    {p}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-          {data.showMic && <MicRing value={data.mic} size={58} stroke={5} color={accent} track="rgba(255,255,255,0.12)" textColor="#fff" />}
+          {data.showMic && <MicMeter value={data.mic} color={accent} track="rgba(255,255,255,0.2)" className="text-white" />}
         </div>
 
         {/* 内容エリア */}
-        <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${portrait ? "gap-5 px-9 py-6" : "gap-[18px] px-9 py-6"}`}>
+        <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${portrait ? "gap-4 px-9 py-6" : "gap-[18px] px-9 py-6"}`}>
           {(rows.length > 0 || data.friend !== "none") && (
             <div className="flex flex-col gap-2.5">
               <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-x-5">
