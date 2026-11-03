@@ -33,7 +33,7 @@ export default function PopCard() {
   const panel = contrastOn(text) === "#ffffff" ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.35)";
 
   const platforms = data.platforms.length > 0 && (
-    <div className={`flex flex-wrap gap-2 ${portrait ? "shrink-0" : ""}`}>
+    <div className={`flex gap-2 ${portrait ? "shrink-0" : "flex-wrap"}`}>
       {data.platforms.map((p) => (
         <span key={p} className="rounded-full px-3 py-[2px] font-maru text-[14px] font-bold" style={{ background: accent, color: contrastOn(accent) }}>
           {p}
@@ -112,8 +112,8 @@ export default function PopCard() {
 
         {data.photoMode && (
           <div className={`grid shrink-0 grid-cols-3 gap-3 ${portrait ? "h-[80px]" : "h-[84px]"}`}>
-            {data.subImages.map((src, i) => (
-              <SubPhoto key={i} src={src} className="rounded-2xl border-[3px] border-white" style={{ background: alpha(accent, 0.15), transform: `rotate(${[-2, 1.5, -1][i]}deg)` }} />
+            {[0, 1, 2].map((i) => (
+              <SubPhoto key={i} index={i} className="rounded-2xl border-[3px] border-white" style={{ background: alpha(accent, 0.15), transform: `rotate(${[-2, 1.5, -1][i]}deg)` }} />
             ))}
           </div>
         )}

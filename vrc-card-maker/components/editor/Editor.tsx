@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { ImagePlus, Plus, RotateCcw, Trash2, X } from "lucide-react";
-import { FRIEND_INFO, PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, micText, newId, type CardData, type Status, type TemplateId } from "@/lib/card";
+import { Crop, ImagePlus, Plus, RotateCcw, Trash2, X } from "lucide-react";
+import { DEFAULT_FRAME, FRIEND_INFO, PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, micText, newId, type CardData, type PhotoFrame, type Status, type TemplateId } from "@/lib/card";
 import { fileToDataUrl } from "@/lib/image";
+import { FramedImg } from "@/components/card/parts";
+import CropDialog from "./CropDialog";
 import { Check, Field, Section, Slider, Toggle, inputClass } from "./ui";
 
 type Update = (fn: (d: CardData) => CardData) => void;
 
-function ImageSlot({ src, onFile, onClear, className, label }: { src: string | null; onFile: (f: File) => void; onClear: () => void; className: string; label: string }) {
+function ImageSlot({ src, frame, onFile, onClear, onCrop, className, label }: { src: string | null; frame: PhotoFrame; onFile: (f: File) => void; onClear: () => void; onCrop: () => void; className: string; label: string }) {
   const [over, setOver] = useState(false);
   return (
     <div className={`relative ${className}`}>
@@ -27,8 +29,7 @@ function ImageSlot({ src, onFile, onClear, className, label }: { src: string | n
         }}
       >
         {src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt="" className="h-full w-full object-cover" />
+          <FramedImg src={src} frame={frame} />
         ) : (
           <span className="flex flex-col items-center gap-1 text-[10px] font-black uppercase italic text-neutral-600">
             <ImagePlus size={18} />
@@ -47,9 +48,18 @@ function ImageSlot({ src, onFile, onClear, className, label }: { src: string | n
         />
       </label>
       {src && (
-        <button type="button" onClick={onClear} aria-label="写真を削除" className="absolute -right-2 -top-2 rounded-full border border-neutral-700 bg-neutral-900 p-1 text-neutral-400 hover:text-white">
-          <X size={12} />
-        </button>
+        <>
+          <button type="button" onClick={onClear} aria-label="写真を削除" className="absolute -right-2 -top-2 rounded-full border border-neutral-700 bg-neutral-900 p-1 text-neutral-400 hover:text-white">
+            <X size={12} />
+          </button>
+          <button
+            type="button"
+            onClick={onCrop}
+            className="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded-full border border-neutral-600 bg-neutral-900/90 px-2 py-[3px] text-[10px] font-bold text-neutral-200 hover:text-white"
+          >
+            <Crop size={11} /> トリミング
+          </button>
+        </>
       )}
     </div>
   );
@@ -59,6 +69,8 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
   const set = (patch: Partial<CardData>) => update((d) => ({ ...d, ...patch }));
   const [newTag, setNewTag] = useState("");
   const [loadingImage, setLoadingImage] = useState(false);
+  /** トリミング中の写真。-1 はメイン、0〜2 はサブ */
+  const [cropping, setCropping] = useState<{ slot: number; aspect: number } | null>(null);
   const template = TEMPLATES.find((t) => t.id === data.template) ?? TEMPLATES[0];
 
   const loadImage = async (file: File, apply: (url: string) => void, max: number) => {
@@ -71,6 +83,17 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
       setLoadingImage(false);
     }
   };
+
+  // ポップアップの枠はカード上の写真枠と同じ縦横比にする
+  const openCrop = (slot: number) => {
+    const el = document.querySelector<HTMLElement>(`[data-photo-slot="${slot < 0 ? "main" : `sub-${slot}`}"]`);
+    const aspect = el && el.offsetWidth && el.offsetHeight ? el.offsetWidth / el.offsetHeight : 16 / 9;
+    setCropping({ slot, aspect });
+  };
+  const frameOf = (slot: number) => (slot < 0 ? data.photo : data.subFrames[slot]);
+  const setFrame = (slot: number, frame: PhotoFrame) =>
+    update((d) => (slot < 0 ? { ...d, photo: frame } : { ...d, subFrames: d.subFrames.map((f, j) => (j === slot ? frame : f)) }));
+  const cropSrc = cropping && (cropping.slot < 0 ? data.mainImage : data.subImages[cropping.slot]);
 
   const chooseTemplate = (id: TemplateId) => {
     const t = TEMPLATES.find((x) => x.id === id)!;
@@ -167,34 +190,28 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
       <Section no="03" title="写真" aside={loadingImage && <span className="text-[10px] text-neutral-500">読み込み中…</span>}>
         <ImageSlot
           src={data.mainImage}
+          frame={data.photo}
           label="Main Photo +"
           className="h-28"
-          onFile={(f) => loadImage(f, (url) => set({ mainImage: url, photo: { x: 50, y: 50, zoom: 1 } }), 1800)}
+          onFile={(f) => loadImage(f, (url) => set({ mainImage: url, photo: { ...DEFAULT_FRAME } }), 1800)}
           onClear={() => set({ mainImage: null })}
+          onCrop={() => openCrop(-1)}
         />
-        {data.mainImage && (
-          <div className="space-y-3 rounded-xl border border-neutral-800 bg-black p-3">
-            <Slider label="ズーム" value={data.photo.zoom} min={1} max={3} step={0.05} format={(v) => `${v.toFixed(2)}x`} onChange={(zoom) => set({ photo: { ...data.photo, zoom } })} />
-            <Slider label="横位置" value={data.photo.x} min={0} max={100} step={0.5} format={(v) => `${Math.round(v)}%`} onChange={(x) => set({ photo: { ...data.photo, x } })} />
-            <Slider label="縦位置" value={data.photo.y} min={0} max={100} step={0.5} format={(v) => `${Math.round(v)}%`} onChange={(y) => set({ photo: { ...data.photo, y } })} />
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-neutral-600">プレビューの写真をドラッグしても動かせます</span>
-              <button type="button" onClick={() => set({ photo: { x: 50, y: 50, zoom: 1 } })} className="flex items-center gap-1 text-[10px] font-bold text-neutral-400 hover:text-white">
-                <RotateCcw size={11} /> リセット
-              </button>
-            </div>
-          </div>
-        )}
+        {data.mainImage && <p className="text-[10px] text-neutral-600">「トリミング」で写る範囲を調整できます。プレビューの写真をドラッグしても動かせます</p>}
         {data.photoMode && (
           <div className="grid grid-cols-3 gap-2">
             {[0, 1, 2].map((i) => (
               <ImageSlot
                 key={i}
                 src={data.subImages[i]}
+                frame={data.subFrames[i]}
                 label={`Sub ${i + 1}`}
                 className="h-16"
-                onFile={(f) => loadImage(f, (url) => update((d) => ({ ...d, subImages: d.subImages.map((s, j) => (j === i ? url : s)) })), 900)}
+                onFile={(f) =>
+                  loadImage(f, (url) => update((d) => ({ ...d, subImages: d.subImages.map((s, j) => (j === i ? url : s)), subFrames: d.subFrames.map((fr, j) => (j === i ? { ...DEFAULT_FRAME } : fr)) })), 900)
+                }
                 onClear={() => update((d) => ({ ...d, subImages: d.subImages.map((s, j) => (j === i ? null : s)) }))}
+                onCrop={() => openCrop(i)}
               />
             ))}
           </div>
@@ -332,6 +349,16 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
           カードに記号の凡例を表示する
         </Check>
       </Section>
+      {cropping && cropSrc && (
+        <CropDialog
+          title={cropping.slot < 0 ? "メイン写真" : `サブ写真 ${cropping.slot + 1}`}
+          src={cropSrc}
+          frame={frameOf(cropping.slot)}
+          aspect={cropping.aspect}
+          onChange={(frame) => setFrame(cropping.slot, frame)}
+          onClose={() => setCropping(null)}
+        />
+      )}
     </div>
   );
 }

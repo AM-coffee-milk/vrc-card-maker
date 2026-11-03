@@ -36,8 +36,8 @@ export default function StreetCard() {
         {/* 横向きの写真モードは、サブ写真をメイン写真の下に並べる */}
         {data.photoMode && !portrait && (
           <div className="grid h-[104px] shrink-0 grid-cols-3 gap-2.5 p-3">
-            {data.subImages.map((src, i) => (
-              <SubPhoto key={i} src={src} className="rounded-xl" style={{ background: "rgba(255,255,255,0.08)" }} />
+            {[0, 1, 2].map((i) => (
+              <SubPhoto key={i} index={i} className="rounded-xl" style={{ background: "rgba(255,255,255,0.08)" }} />
             ))}
           </div>
         )}
@@ -99,8 +99,8 @@ export default function StreetCard() {
 
           {data.photoMode && portrait && (
             <div className="grid h-[84px] shrink-0 grid-cols-3 gap-2.5">
-              {data.subImages.map((src, i) => (
-                <SubPhoto key={i} src={src} className="rounded-xl" style={{ background: alpha(text, 0.08) }} />
+              {[0, 1, 2].map((i) => (
+                <SubPhoto key={i} index={i} className="rounded-xl" style={{ background: alpha(text, 0.08) }} />
               ))}
             </div>
           )}

@@ -23,6 +23,8 @@ export interface PhotoFrame {
   zoom: number; // 1-3
 }
 
+export const DEFAULT_FRAME: PhotoFrame = { x: 50, y: 50, zoom: 1 };
+
 export interface CardData {
   version: 1;
   template: TemplateId;
@@ -47,6 +49,8 @@ export interface CardData {
   mainImage: string | null;
   photo: PhotoFrame;
   subImages: (string | null)[];
+  /** サブ写真ごとのトリミング位置 */
+  subFrames: PhotoFrame[];
 }
 
 // 書き出しサイズ (CSS px)。pixelRatio 2 で 1920x1080 / 1080x1920 になる
@@ -149,8 +153,9 @@ export function defaultCard(): CardData {
     tags: PRESET_TAGS.map((label) => ({ id: newId(), label, status: "none" })),
     colors: { bg: p.bg, accent: p.accent, text: p.text },
     mainImage: null,
-    photo: { x: 50, y: 50, zoom: 1 },
+    photo: { ...DEFAULT_FRAME },
     subImages: [null, null, null],
+    subFrames: [0, 1, 2].map(() => ({ ...DEFAULT_FRAME })),
   };
 }
 
@@ -168,6 +173,7 @@ export function normalizeCard(raw: unknown): CardData {
     tags: Array.isArray(r.tags) ? r.tags : base.tags,
     platforms: Array.isArray(r.platforms) ? r.platforms : base.platforms,
     subImages: [0, 1, 2].map((i) => r.subImages?.[i] ?? null),
+    subFrames: [0, 1, 2].map((i) => ({ ...DEFAULT_FRAME, ...(r.subFrames?.[i] ?? {}) })),
   };
 }
 

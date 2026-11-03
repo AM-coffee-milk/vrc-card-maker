@@ -94,8 +94,8 @@ export default function IdCard() {
 
   const subPhotos = data.photoMode && (
     <div className={`grid shrink-0 grid-cols-3 gap-2 ${portrait ? "h-[120px]" : "h-[74px]"}`}>
-      {data.subImages.map((src, i) => (
-        <SubPhoto key={i} src={src} className="rounded-md" style={{ background: alpha(text, 0.06), border: `1px solid ${alpha(text, 0.18)}` }} />
+      {[0, 1, 2].map((i) => (
+        <SubPhoto key={i} index={i} className="rounded-md" style={{ background: alpha(text, 0.06), border: `1px solid ${alpha(text, 0.18)}` }} />
       ))}
     </div>
   );

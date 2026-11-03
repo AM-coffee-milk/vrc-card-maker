@@ -20,15 +20,36 @@ export function useCard() {
   return ctx;
 }
 
+/** トリミング位置・ズームを反映した写真。カードとトリミング画面で同じ見え方にするため共通化している */
+export function FramedImg({ src, frame, className = "" }: { src: string; frame: PhotoFrame; className?: string }) {
+  const { x, y, zoom } = frame;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      draggable={false}
+      className={`pointer-events-none h-full w-full select-none object-cover ${className}`}
+      style={{ objectPosition: `${x}% ${y}%`, transform: `scale(${zoom})`, transformOrigin: `${x}% ${y}%` }}
+    />
+  );
+}
+
+/** ドラッグ量 (枠の幅・高さに対する px) をトリミング位置に換算する。ズーム時は細かく動く */
+export function panFrame(frame: PhotoFrame, dx: number, dy: number, w: number, h: number): PhotoFrame {
+  const k = (100 / frame.zoom) * 1.5;
+  const clamp = (v: number) => Math.round(Math.min(100, Math.max(0, v)) * 10) / 10;
+  return { ...frame, x: clamp(frame.x - (dx / w) * k), y: clamp(frame.y - (dy / h) * k) };
+}
+
 /** メイン写真。位置・ズームを反映し、プレビューではドラッグで動かせる */
 export function MainPhoto({ className = "", placeholderColor }: { className?: string; placeholderColor?: string }) {
   const { data, onPhotoChange } = useCard();
-  const { x, y, zoom } = data.photo;
-  const drag = useRef<{ px: number; py: number; x: number; y: number; w: number; h: number } | null>(null);
+  const drag = useRef<{ px: number; py: number; frame: PhotoFrame; w: number; h: number } | null>(null);
 
   if (!data.mainImage) {
     return (
-      <div className={`flex flex-col items-center justify-center gap-2 ${className}`} style={{ color: placeholderColor ?? "rgba(255,255,255,0.35)" }}>
+      <div data-photo-slot="main" className={`flex flex-col items-center justify-center gap-2 ${className}`} style={{ color: placeholderColor ?? "rgba(255,255,255,0.35)" }}>
         <ImageIcon size={40} strokeWidth={1.5} />
         <span className="font-mono text-[12px] tracking-[0.2em]">NO PHOTO</span>
       </div>
@@ -38,17 +59,13 @@ export function MainPhoto({ className = "", placeholderColor }: { className?: st
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!onPhotoChange) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    drag.current = { px: e.clientX, py: e.clientY, x, y, w: rect.width, h: rect.height };
+    drag.current = { px: e.clientX, py: e.clientY, frame: data.photo, w: rect.width, h: rect.height };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
     if (!d || !onPhotoChange) return;
-    // 指の移動量を object-position の % に換算 (ズーム時は細かく動く)
-    const k = 100 / zoom;
-    const nx = Math.min(100, Math.max(0, d.x - ((e.clientX - d.px) / d.w) * k * 1.5));
-    const ny = Math.min(100, Math.max(0, d.y - ((e.clientY - d.py) / d.h) * k * 1.5));
-    onPhotoChange({ ...data.photo, x: Math.round(nx * 10) / 10, y: Math.round(ny * 10) / 10 });
+    onPhotoChange(panFrame(d.frame, e.clientX - d.px, e.clientY - d.py, d.w, d.h));
   };
   const onPointerUp = () => {
     drag.current = null;
@@ -56,30 +73,25 @@ export function MainPhoto({ className = "", placeholderColor }: { className?: st
 
   return (
     <div
+      data-photo-slot="main"
       className={`overflow-hidden ${onPhotoChange ? "cursor-grab touch-none active:cursor-grabbing" : ""} ${className}`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={data.mainImage}
-        alt=""
-        draggable={false}
-        className="pointer-events-none h-full w-full select-none object-cover"
-        style={{ objectPosition: `${x}% ${y}%`, transform: `scale(${zoom})`, transformOrigin: `${x}% ${y}%` }}
-      />
+      <FramedImg src={data.mainImage} frame={data.photo} />
     </div>
   );
 }
 
-/** サブ写真 (PHOTO MODE) */
-export function SubPhoto({ src, className = "", style }: { src: string | null; className?: string; style?: CSSProperties }) {
+/** サブ写真 (PHOTO MODE)。トリミング位置は編集画面のポップアップで調整する */
+export function SubPhoto({ index, className = "", style }: { index: number; className?: string; style?: CSSProperties }) {
+  const { data } = useCard();
+  const src = data.subImages[index];
   return (
-    <div className={`overflow-hidden ${className}`} style={style}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      {src && <img src={src} alt="" className="h-full w-full object-cover" />}
+    <div data-photo-slot={`sub-${index}`} className={`overflow-hidden ${className}`} style={style}>
+      {src && <FramedImg src={src} frame={data.subFrames[index]} />}
     </div>
   );
 }
