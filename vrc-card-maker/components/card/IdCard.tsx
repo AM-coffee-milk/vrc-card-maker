@@ -54,7 +54,7 @@ export default function IdCard() {
   const xId = data.xId ? (data.xId.startsWith("@") ? data.xId : `@${data.xId}`) : "";
 
   const photo = (
-    <div className={`relative shrink-0 overflow-hidden rounded-lg ${portrait ? "h-[270px] w-[204px]" : data.photoMode ? "h-[216px] w-[220px]" : "h-[286px] w-[220px]"}`} style={{ border: `1px solid ${alpha(text, 0.25)}`, background: alpha(text, 0.06) }}>
+    <div className={`relative shrink-0 overflow-hidden rounded-lg ${portrait ? "h-[270px] w-[204px]" : data.photoMode ? "h-[244px] w-[244px]" : "h-[286px] w-[220px]"}`} style={{ border: `1px solid ${alpha(text, 0.25)}`, background: alpha(text, 0.06) }}>
       <MainPhoto className="absolute inset-0" placeholderColor={alpha(text, 0.35)} />
       {/* 四隅のトンボ */}
       {["left-1.5 top-1.5 border-l-2 border-t-2", "right-1.5 top-1.5 border-r-2 border-t-2", "bottom-1.5 left-1.5 border-b-2 border-l-2", "bottom-1.5 right-1.5 border-b-2 border-r-2"].map((c) => (
@@ -85,7 +85,7 @@ export default function IdCard() {
   );
 
   const subPhotos = data.photoMode && (
-    <div className={`grid shrink-0 grid-cols-3 gap-2 ${portrait ? "h-[96px]" : "h-[58px]"}`}>
+    <div className={`grid shrink-0 grid-cols-3 gap-2 ${portrait ? "h-[120px]" : "h-[74px]"}`}>
       {data.subImages.map((src, i) => (
         <SubPhoto key={i} src={src} className="rounded-md" style={{ background: alpha(text, 0.06), border: `1px solid ${alpha(text, 0.18)}` }} />
       ))}
@@ -157,7 +157,7 @@ export default function IdCard() {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 gap-7 px-8 pb-2 pt-5">
-          <div className="flex w-[220px] shrink-0 flex-col gap-3">
+          <div className={`flex shrink-0 flex-col gap-3 ${data.photoMode ? "w-[244px]" : "w-[220px]"}`}>
             {photo}
             {subPhotos}
             {meta}
