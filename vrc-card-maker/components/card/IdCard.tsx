@@ -56,10 +56,6 @@ export default function IdCard() {
   const photo = (
     <div className={`relative shrink-0 overflow-hidden rounded-lg ${portrait ? "h-[270px] w-[204px]" : data.photoMode ? "h-[244px] w-[244px]" : "h-[286px] w-[220px]"}`} style={{ border: `1px solid ${alpha(text, 0.25)}`, background: alpha(text, 0.06) }}>
       <MainPhoto className="absolute inset-0" placeholderColor={alpha(text, 0.35)} />
-      {/* 四隅のトンボ */}
-      {["left-1.5 top-1.5 border-l-2 border-t-2", "right-1.5 top-1.5 border-r-2 border-t-2", "bottom-1.5 left-1.5 border-b-2 border-l-2", "bottom-1.5 right-1.5 border-b-2 border-r-2"].map((c) => (
-        <span key={c} className={`pointer-events-none absolute h-4 w-4 ${c}`} style={{ borderColor: accent }} />
-      ))}
     </div>
   );
 

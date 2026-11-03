@@ -35,9 +35,13 @@ export default function PopCard() {
 
   const nameBlock = (
     <div className="pointer-events-none flex min-w-0 flex-col gap-2">
-      <h2 className="truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
-        {data.name || "なまえ"}
-      </h2>
+      <div className="flex items-center gap-3">
+        <h2 className="min-w-0 flex-1 truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
+          {data.name || "なまえ"}
+        </h2>
+        {/* 縦向きは高さを写真に回したいので、スタンプは名前の横に置く */}
+        {portrait && <FriendStamp oneLine className="-my-2" />}
+      </div>
       <div className="flex items-center gap-2">
         <div className="flex min-w-0 flex-1 flex-wrap gap-2">
           {data.platforms.map((p) => (
@@ -56,14 +60,14 @@ export default function PopCard() {
             <span className="font-maru text-[11px] font-bold">{micText(data.mic)}</span>
           </span>
         )}
-        <FriendStamp oneLine={portrait} className="mt-1.5" />
+        {!portrait && <FriendStamp className="mt-1.5" />}
       </div>
     </div>
   );
 
   return (
     <div
-      className={`relative flex h-full w-full overflow-hidden ${portrait ? "flex-col gap-5 rounded-[48px] p-8" : "flex-row gap-7 rounded-[40px] p-7"}`}
+      className={`relative flex h-full w-full overflow-hidden ${portrait ? "flex-col gap-4 rounded-[48px] p-6" : "flex-row gap-7 rounded-[40px] p-7"}`}
       style={{
         backgroundColor: bg,
         backgroundImage: `radial-gradient(${alpha(accent, 0.22)} 2px, transparent 2.6px)`,
@@ -71,23 +75,24 @@ export default function PopCard() {
         color: text,
       }}
     >
-      <Sparkle size={30} color={accent} className={portrait ? "right-8 top-6" : "left-[350px] top-4"} />
-      <Sparkle size={16} color={alpha(accent, 0.6)} className={portrait ? "right-16 top-14" : "left-[330px] top-12"} />
+      {/* キラキラは写真にかからない隅に置く */}
+      <Sparkle size={30} color={accent} className={portrait ? "bottom-2 left-3" : "right-11 top-1"} />
+      <Sparkle size={16} color={alpha(accent, 0.6)} className={portrait ? "bottom-10 left-1" : "right-20 top-2.5"} />
       <Sparkle size={22} color={alpha(accent, 0.7)} className="bottom-5 right-6" />
 
       {/* 写真と名前 */}
       <div className={`flex shrink-0 flex-col gap-4 ${portrait ? "w-full" : "w-[350px]"}`}>
-        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[226px]" : "h-[316px]") : "h-[340px]"}`}>
+        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[310px]" : "h-[400px]") : "h-[340px]"}`}>
           <div className="absolute inset-0 rotate-[-2deg] rounded-[30px] bg-white p-2.5" style={{ boxShadow: `0 10px 0 ${alpha(accent, 0.35)}` }}>
             <MainPhoto className="h-full w-full rounded-[22px]" placeholderColor={alpha(text, 0.35)} />
           </div>
-          <div className="pointer-events-none absolute -top-3 left-1/2 h-7 w-28 -translate-x-1/2 rotate-[-4deg] rounded-sm" style={{ background: alpha(accent, 0.55) }} />
+          <div className="pointer-events-none absolute -top-5 left-1/2 h-6 w-28 -translate-x-1/2 rotate-[-4deg] rounded-sm" style={{ background: alpha(accent, 0.55) }} />
         </div>
         {nameBlock}
       </div>
 
       {/* プロフィール */}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 rounded-[32px] p-6" style={{ background: panel, boxShadow: `6px 6px 0 ${accent}` }}>
+      <div className={`flex min-h-0 min-w-0 flex-1 flex-col rounded-[32px] ${portrait ? "gap-3 p-5" : "gap-4 p-6"}`} style={{ background: panel, boxShadow: `6px 6px 0 ${accent}` }}>
         {rows.length > 0 && (
           <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
             {rows.map((r) => (
@@ -102,7 +107,7 @@ export default function PopCard() {
         )}
 
         {data.photoMode && (
-          <div className={`grid shrink-0 grid-cols-3 gap-3 ${portrait ? "h-[92px]" : "h-[84px]"}`}>
+          <div className={`grid shrink-0 grid-cols-3 gap-3 ${portrait ? "h-[80px]" : "h-[84px]"}`}>
             {data.subImages.map((src, i) => (
               <SubPhoto key={i} src={src} className="rounded-2xl border-[3px] border-white" style={{ background: alpha(accent, 0.15), transform: `rotate(${[-2, 1.5, -1][i]}deg)` }} />
             ))}
