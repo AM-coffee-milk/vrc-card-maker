@@ -121,7 +121,7 @@ export function defaultCard(): CardData {
     template: "street",
     orientation: "landscape",
     photoMode: false,
-    name: "フランミルク",
+    name: "",
     vrcName: "",
     xId: "",
     activeTime: "",

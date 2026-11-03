@@ -203,14 +203,14 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
 
       <Section no="04" title="プロフィール">
         <Field label="名前" hint={`${data.name.length}/24`}>
-          <input className={inputClass} value={data.name} maxLength={24} onChange={(e) => set({ name: e.target.value })} placeholder="フランミルク" />
+          <input className={inputClass} value={data.name} maxLength={24} onChange={(e) => set({ name: e.target.value })} placeholder="あなたの名前" />
         </Field>
         <div className="grid grid-cols-2 gap-2">
           <Field label="VRChat 表示名">
-            <input className={inputClass} value={data.vrcName} maxLength={32} onChange={(e) => set({ vrcName: e.target.value })} placeholder="FLANMILK" />
+            <input className={inputClass} value={data.vrcName} maxLength={32} onChange={(e) => set({ vrcName: e.target.value })} placeholder="VRChat の表示名" />
           </Field>
           <Field label="X (Twitter) ID">
-            <input className={inputClass} value={data.xId} maxLength={32} onChange={(e) => set({ xId: e.target.value })} placeholder="@flanmilk" />
+            <input className={inputClass} value={data.xId} maxLength={32} onChange={(e) => set({ xId: e.target.value })} placeholder="@your_id" />
           </Field>
           <Field label="よくいる時間">
             <input className={inputClass} value={data.activeTime} maxLength={32} onChange={(e) => set({ activeTime: e.target.value })} placeholder="平日22時〜" />
