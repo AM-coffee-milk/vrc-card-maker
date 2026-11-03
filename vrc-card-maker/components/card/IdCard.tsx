@@ -71,7 +71,7 @@ export default function IdCard() {
       <div className="min-w-0 flex-1">
         <Field label="Name" ja="名前" value={data.name} color={text} big />
       </div>
-      <FriendStamp color={accent} className="-my-3" />
+      <FriendStamp color={accent} className="-mt-4 mb-1.5" />
     </div>
   );
 
