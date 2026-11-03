@@ -120,16 +120,19 @@ export function usedStatuses(tags: Tag[]) {
   return STATUS_ORDER.filter((s) => tags.some((t) => t.status === s && t.label.trim()));
 }
 
-/** マイク ON 率。何の数字か分かるよう日本語のラベルと大きな数値で出す (バーは飾り) */
-export function MicMeter({ value, color, track, className = "", style }: { value: number; color: string; track: string; className?: string; style?: CSSProperties }) {
+/**
+ * マイク ON 率。何の数字か分かるよう日本語のラベルと大きな数値で出す (バーは飾り)。
+ * fill を付けると空いている幅いっぱいに広がり、バーも伸びる。
+ */
+export function MicMeter({ value, color, track, fill = false, className = "", style }: { value: number; color: string; track: string; fill?: boolean; className?: string; style?: CSSProperties }) {
   return (
-    <div className={`flex shrink-0 flex-col gap-1 ${className}`} style={style}>
-      <span className="text-[12px] font-bold leading-none">マイクON率</span>
-      <div className="flex items-center gap-2">
-        <span className="relative h-[8px] w-[60px] overflow-hidden rounded-full" style={{ background: track }}>
+    <div className={`flex flex-col gap-1.5 ${fill ? "min-w-0 flex-1" : "shrink-0"} ${className}`} style={style}>
+      <span className="text-[15px] font-bold leading-none">マイクON率</span>
+      <div className="flex items-center gap-2.5">
+        <span className={`relative h-[10px] overflow-hidden rounded-full ${fill ? "min-w-[40px] flex-1" : "w-[80px]"}`} style={{ background: track }}>
           <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${value}%`, background: color }} />
         </span>
-        <span className="text-[18px] font-black leading-none">{micText(value)}</span>
+        <span className="shrink-0 text-[24px] font-black leading-none">{micText(value)}</span>
       </div>
     </div>
   );

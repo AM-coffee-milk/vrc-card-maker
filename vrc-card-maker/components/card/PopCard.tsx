@@ -33,7 +33,7 @@ export default function PopCard() {
   const panel = contrastOn(text) === "#ffffff" ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.35)";
 
   const platforms = data.platforms.length > 0 && (
-    <div className="flex min-w-0 flex-1 flex-wrap gap-2">
+    <div className={`flex flex-wrap gap-2 ${portrait ? "shrink-0" : ""}`}>
       {data.platforms.map((p) => (
         <span key={p} className="rounded-full px-3 py-[2px] font-maru text-[14px] font-bold" style={{ background: accent, color: contrastOn(accent) }}>
           {p}
@@ -41,7 +41,7 @@ export default function PopCard() {
       ))}
     </div>
   );
-  const mic = data.showMic && <MicMeter value={data.mic} color={accent} track={alpha(accent, 0.2)} className="rounded-2xl px-3 py-2 font-maru" style={{ background: panel, color: text }} />;
+  const mic = data.showMic && <MicMeter fill value={data.mic} color={accent} track={alpha(accent, 0.2)} className="rounded-2xl px-3 py-1.5 font-maru" style={{ background: panel, color: text }} />;
 
   // マイクとスタンプは重ならないよう同じ行に並べる (横向きは幅が狭いのでプラットフォームを別の行にする)
   const nameBlock = (
@@ -51,16 +51,16 @@ export default function PopCard() {
       </h2>
       {portrait ? (
         <div className="flex items-center gap-3">
-          {platforms || <div className="flex-1" />}
-          {mic}
+          {platforms}
+          {mic || <div className="flex-1" />}
           <FriendStamp oneLine />
         </div>
       ) : (
         <>
           {platforms}
           {(mic || data.friend !== "none") && (
-            <div className="flex items-center justify-between gap-3">
-              {mic}
+            <div className="flex items-center gap-3">
+              {mic || <div className="flex-1" />}
               <FriendStamp oneLine />
             </div>
           )}
@@ -96,7 +96,7 @@ export default function PopCard() {
       </div>
 
       {/* プロフィール */}
-      <div className={`flex min-h-0 min-w-0 flex-1 flex-col rounded-[32px] ${portrait ? "gap-3 p-5" : "gap-4 p-6"}`} style={{ background: panel, boxShadow: `6px 6px 0 ${accent}` }}>
+      <div className={`flex min-h-0 min-w-0 flex-1 flex-col rounded-[32px] ${portrait ? "gap-3 px-5 py-4" : "gap-4 p-6"}`} style={{ background: panel, boxShadow: `6px 6px 0 ${accent}` }}>
         {rows.length > 0 && (
           <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
             {rows.map((r) => (
