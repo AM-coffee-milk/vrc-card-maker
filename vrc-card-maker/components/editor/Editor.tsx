@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ImagePlus, Plus, RotateCcw, Trash2, X } from "lucide-react";
-import { PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, newId, type CardData, type Status, type TemplateId } from "@/lib/card";
+import { PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, micText, newId, type CardData, type Status, type TemplateId } from "@/lib/card";
 import { fileToDataUrl } from "@/lib/image";
 import { Check, Field, Section, Slider, Toggle, inputClass } from "./ui";
 
@@ -232,9 +232,10 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
           </div>
         </div>
         <div className="space-y-3 rounded-xl border border-neutral-800 bg-black p-3">
-          <Slider label="MIC VOLUME" value={data.mic} min={0} max={100} format={(v) => `${v}%`} onChange={(mic) => set({ mic })} />
+          <Slider label="マイクON率" value={data.mic} min={0} max={100} step={10} format={micText} onChange={(mic) => set({ mic })} />
+          <p className="text-[10px] leading-relaxed text-neutral-600">普段どれくらいマイクを ON にしているか。0% にすると「無言勢」と表示されます</p>
           <Check checked={data.showMic} onChange={(showMic) => set({ showMic })}>
-            カードにマイク音量を表示する
+            カードにマイクON率を表示する
           </Check>
         </div>
       </Section>

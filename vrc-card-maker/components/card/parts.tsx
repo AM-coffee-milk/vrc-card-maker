@@ -4,7 +4,7 @@
 
 import { createContext, useContext, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { ImageIcon } from "lucide-react";
-import { STATUS_INFO, STATUS_ORDER, type CardData, type PhotoFrame, type Status, type Tag } from "@/lib/card";
+import { STATUS_INFO, STATUS_ORDER, micText, type CardData, type PhotoFrame, type Status, type Tag } from "@/lib/card";
 
 interface CardCtx {
   data: CardData;
@@ -120,7 +120,7 @@ export function usedStatuses(tags: Tag[]) {
   return STATUS_ORDER.filter((s) => tags.some((t) => t.status === s && t.label.trim()));
 }
 
-/** 円形のマイク音量メーター */
+/** 円形のマイク ON 率メーター */
 export function MicRing({ value, size, stroke, color, track, textColor, label = true }: { value: number; size: number; stroke: number; color: string; track: string; textColor: string; label?: boolean }) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
@@ -131,8 +131,8 @@ export function MicRing({ value, size, stroke, color, track, textColor, label = 
         <circle cx={size / 2} cy={size / 2} r={r} stroke={color} strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={c * (1 - value / 100)} strokeLinecap="round" />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center leading-none" style={{ color: textColor }}>
-        {label && <span className="font-mono text-[8px] tracking-widest opacity-70">MIC</span>}
-        <span className="font-oswald text-[15px] font-bold">{value}%</span>
+        {label && <span className="font-mono text-[8px] tracking-wider opacity-70">MIC ON</span>}
+        <span className={`font-oswald font-bold ${value === 0 ? "text-[12px]" : "text-[15px]"}`}>{micText(value)}</span>
       </div>
     </div>
   );

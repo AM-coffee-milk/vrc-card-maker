@@ -2,7 +2,7 @@
 
 // ID CARD: 身分証風のきっちり系
 
-import { STATUS_INFO, STATUS_ORDER, alpha, contrastOn } from "@/lib/card";
+import { STATUS_INFO, STATUS_ORDER, alpha, contrastOn, micText } from "@/lib/card";
 import { FitText, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
 
 function hash(s: string) {
@@ -74,11 +74,11 @@ export default function IdCard() {
       </div>
       {data.showMic && (
         <div className="flex items-center gap-2 font-mono text-[11px]" style={{ color: alpha(text, 0.7) }}>
-          MIC
+          MIC ON
           <span className="relative h-[6px] flex-1 overflow-hidden rounded-sm" style={{ background: alpha(text, 0.12) }}>
             <span className="absolute inset-y-0 left-0" style={{ width: `${data.mic}%`, background: accent }} />
           </span>
-          {data.mic}%
+          {micText(data.mic)}
         </div>
       )}
     </div>

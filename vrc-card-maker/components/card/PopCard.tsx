@@ -3,7 +3,7 @@
 // POP: まるっとかわいいパステル系
 
 import { Mic } from "lucide-react";
-import { STATUS_INFO, alpha, contrastOn } from "@/lib/card";
+import { STATUS_INFO, alpha, contrastOn, micText } from "@/lib/card";
 import { FitText, MainPhoto, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function Sparkle({ size, color, className = "" }: { size: number; color: string; className?: string }) {
@@ -47,10 +47,11 @@ export default function PopCard() {
         {data.showMic && (
           <span className="ml-auto flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-[3px]" style={{ background: panel, color: text }}>
             <Mic size={13} strokeWidth={2.5} color={accent} />
+            <span className="font-maru text-[11px] font-bold">ON</span>
             <span className="relative h-[6px] w-[54px] overflow-hidden rounded-full" style={{ background: alpha(accent, 0.2) }}>
               <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${data.mic}%`, background: accent }} />
             </span>
-            <span className="font-maru text-[11px] font-bold">{data.mic}%</span>
+            <span className="font-maru text-[11px] font-bold">{micText(data.mic)}</span>
           </span>
         )}
       </div>

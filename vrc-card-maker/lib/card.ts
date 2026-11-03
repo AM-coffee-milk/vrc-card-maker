@@ -34,7 +34,7 @@ export interface CardData {
   favorites: string;
   bio: string;
   platforms: string[];
-  mic: number;
+  mic: number; // マイクを ON にしている割合 (0-100)
   showMic: boolean;
   showLegend: boolean;
   tags: Tag[];
@@ -152,6 +152,11 @@ export function normalizeCard(raw: unknown): CardData {
     platforms: Array.isArray(r.platforms) ? r.platforms : base.platforms,
     subImages: [0, 1, 2].map((i) => r.subImages?.[i] ?? null),
   };
+}
+
+/** マイク ON 率の表示 (0% は無言勢) */
+export function micText(v: number) {
+  return v === 0 ? "無言勢" : `${v}%`;
 }
 
 /** #rrggbb に透明度を付ける */
