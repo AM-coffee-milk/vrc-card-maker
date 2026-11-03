@@ -72,7 +72,7 @@ export default function StreetCard() {
               ))}
             </div>
             {/* 写真にかぶせないよう、プロフィール欄の右に押す */}
-            <FriendStamp color={accent} />
+            <FriendStamp />
           </div>
         )}
 

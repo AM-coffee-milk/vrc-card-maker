@@ -148,17 +148,23 @@ export function infoRows(d: CardData) {
   ].filter((r) => r.value.trim());
 }
 
-/** 名前の横に押す、フレンド申請の判子 */
-export function FriendStamp({ color, className = "", style }: { color: string; className?: string; style?: CSSProperties }) {
+/**
+ * 名前の横に押す、フレンド申請の判子。
+ * 色の見分けに頼らないよう、文字はカードの背景色の上に文字色で書く (配色で一番コントラストが取れる組み合わせ)。
+ * アクセント色の上に置くときは onAccent を付けて枠も文字色にする。
+ */
+export function FriendStamp({ onAccent = false, className = "" }: { onAccent?: boolean; className?: string }) {
   const { data } = useCard();
   if (data.friend === "none") return null;
+  const { bg, accent, text } = data.colors;
+  const line = onAccent ? text : accent;
   return (
     <div
       className={`pointer-events-none flex shrink-0 rotate-[-6deg] flex-col items-center rounded-lg px-2.5 py-1 text-center ${className}`}
-      style={{ border: `3px double ${color}`, color, ...style }}
+      style={{ background: bg, color: text, border: `3px double ${line}` }}
     >
       <span className="text-[12px] font-bold leading-tight">フレンド申請</span>
-      <span className="my-[2px] h-px w-full" style={{ background: color }} />
+      <span className="my-[2px] h-px w-full" style={{ background: line }} />
       {FRIEND_INFO[data.friend].stamp.map((line) => (
         <span key={line} className="whitespace-nowrap text-[17px] font-black leading-tight">
           {line}

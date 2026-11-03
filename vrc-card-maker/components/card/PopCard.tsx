@@ -56,7 +56,7 @@ export default function PopCard() {
             <span className="font-maru text-[11px] font-bold">{micText(data.mic)}</span>
           </span>
         )}
-        <FriendStamp color={accent} className="-my-1" style={{ background: "#fff" }} />
+        <FriendStamp className="-my-1" />
       </div>
     </div>
   );
