@@ -164,12 +164,12 @@ export default function IdCard() {
           </div>
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
             <Field label="Name" ja="名前" value={data.name} color={text} big />
-            {/* 自己紹介の高さを確保するため 1 行に並べる */}
-            <div className="grid grid-cols-3 gap-x-4">
+            <div className="grid grid-cols-2 gap-x-5">
               <Field label="X" ja="アカウント" value={xId} color={text} />
               <Field label="Active" ja="いる時間" value={data.activeTime} color={text} />
-              <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
             </div>
+            {/* 好きなものは長くなりやすいので横幅いっぱいに使う */}
+            <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
             {remarks}
             {permissions}
           </div>
