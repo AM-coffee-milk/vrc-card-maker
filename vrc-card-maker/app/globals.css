@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: #000;
+  color: #fff;
+}
+
+/* 編集画面のレンジスライダー */
+input[type="range"].range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: #262626;
+  outline: none;
+}
+input[type="range"].range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #fff;
+  cursor: pointer;
+}
+input[type="range"].range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 9999px;
+  background: #fff;
+  cursor: pointer;
+}
+
+input[type="color"].swatch {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+input[type="color"].swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"].swatch::-webkit-color-swatch {
+  border: 2px solid #404040;
+  border-radius: 9999px;
+}
+input[type="color"].swatch::-moz-color-swatch {
+  border: 2px solid #404040;
+  border-radius: 9999px;
+}
