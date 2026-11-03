@@ -3,14 +3,25 @@
 // 写真のトリミング位置を調整するポップアップ。
 // 枠はカード上の写真枠と同じ縦横比なので、ここで見えている範囲がそのままカードに出る。
 
-import { useEffect, useRef } from "react";
-import { RotateCcw, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Maximize, RotateCcw, X } from "lucide-react";
 import { DEFAULT_FRAME, type PhotoFrame } from "@/lib/card";
 import { FramedImg, panFrame } from "@/components/card/parts";
 import { Slider } from "./ui";
 
 export default function CropDialog({ title, src, frame, aspect, onChange, onClose }: { title: string; src: string; frame: PhotoFrame; aspect: number; onChange: (frame: PhotoFrame) => void; onClose: () => void }) {
   const drag = useRef<{ px: number; py: number; frame: PhotoFrame; w: number; h: number } | null>(null);
+  // ズーム 1 は枠いっぱいに切り抜いた状態。それより小さくすると写真全体が見えるところまで縮められる
+  const [minZoom, setMinZoom] = useState(1);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      const ratio = img.naturalWidth / img.naturalHeight;
+      setMinZoom(Math.floor((Math.min(ratio, aspect) / Math.max(ratio, aspect)) * 100) / 100);
+    };
+    img.src = src;
+  }, [src, aspect]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -66,8 +77,13 @@ export default function CropDialog({ title, src, frame, aspect, onChange, onClos
 
         <p className="text-center text-[11px] text-neutral-500">写真をドラッグして位置を合わせてください。枠の中がそのままカードに出ます</p>
 
-        <div className="rounded-xl border border-neutral-800 bg-black p-3">
-          <Slider label="ズーム" value={frame.zoom} min={1} max={3} step={0.05} format={(v) => `${v.toFixed(2)}x`} onChange={(zoom) => onChange({ ...frame, zoom })} />
+        <div className="space-y-3 rounded-xl border border-neutral-800 bg-black p-3">
+          <Slider label="ズーム (左に動かすと写真全体が見えるまで縮小)" value={frame.zoom} min={minZoom} max={3} step={0.01} format={(v) => `${v.toFixed(2)}x`} onChange={(zoom) => onChange({ ...frame, zoom })} />
+          {minZoom < 1 && (
+            <button type="button" onClick={() => onChange({ x: 50, y: 50, zoom: minZoom })} className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-neutral-700 py-2 text-[12px] font-bold text-neutral-300 hover:text-white">
+              <Maximize size={13} /> 写真全体を入れる
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-2">

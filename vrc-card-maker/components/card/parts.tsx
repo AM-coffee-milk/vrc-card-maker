@@ -37,7 +37,7 @@ export function FramedImg({ src, frame, className = "" }: { src: string; frame: 
 
 /** ドラッグ量 (枠の幅・高さに対する px) をトリミング位置に換算する。ズーム時は細かく動く */
 export function panFrame(frame: PhotoFrame, dx: number, dy: number, w: number, h: number): PhotoFrame {
-  const k = (100 / frame.zoom) * 1.5;
+  const k = (100 / Math.max(frame.zoom, 1)) * 1.5;
   const clamp = (v: number) => Math.round(Math.min(100, Math.max(0, v)) * 10) / 10;
   return { ...frame, x: clamp(frame.x - (dx / w) * k), y: clamp(frame.y - (dy / h) * k) };
 }
