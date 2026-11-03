@@ -39,7 +39,6 @@ export default function StreetCard() {
 
         <div className={`pointer-events-none absolute bottom-7 left-6 rounded-r-2xl bg-black/60 px-4 py-3 ${data.showMic ? "right-[104px]" : "right-6"}`} style={{ borderLeft: `6px solid ${accent}` }}>
           <h2 className="truncate font-oswald text-[38px] font-bold uppercase italic leading-[1.1] text-white">{data.name || "NAME"}</h2>
-          <FriendStamp color={accent} className="absolute -top-[48px] right-2" style={{ background: "rgba(0,0,0,0.6)" }} />
           {data.platforms.length > 0 && (
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {data.platforms.map((p) => (
@@ -60,16 +59,20 @@ export default function StreetCard() {
 
       {/* 内容エリア */}
       <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${portrait ? "gap-5 px-9 py-8" : "gap-[18px] px-9 py-8"}`}>
-        {rows.length > 0 && (
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
-            {rows.map((r) => (
-              <div key={r.key} className="min-w-0">
-                <div className="font-oswald text-[11px] font-bold uppercase italic tracking-[0.2em]" style={{ color: alpha(text, 0.55) }}>
-                  {r.label}
+        {(rows.length > 0 || data.friend !== "none") && (
+          <div className="flex items-center gap-5">
+            <div className="grid min-w-0 flex-1 grid-cols-2 gap-x-6 gap-y-2.5">
+              {rows.map((r) => (
+                <div key={r.key} className="min-w-0">
+                  <div className="font-oswald text-[11px] font-bold uppercase italic tracking-[0.2em]" style={{ color: alpha(text, 0.55) }}>
+                    {r.label}
+                  </div>
+                  <div className="truncate text-[15px] font-bold leading-snug">{r.value}</div>
                 </div>
-                <div className="truncate text-[15px] font-bold leading-snug">{r.value}</div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {/* 写真にかぶせないよう、プロフィール欄の右に押す */}
+            <FriendStamp color={accent} />
           </div>
         )}
 

@@ -35,21 +35,19 @@ export default function PopCard() {
 
   const nameBlock = (
     <div className="pointer-events-none flex min-w-0 flex-col gap-2">
-      <div className="flex items-center gap-3">
-        <h2 className="min-w-0 truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
-          {data.name || "なまえ"}
-        </h2>
-        {/* 行の高さを増やさないよう上下にはみ出させる */}
-        <FriendStamp color={accent} size={68} className="-my-3" style={{ background: "#fff" }} />
-      </div>
+      <h2 className="truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
+        {data.name || "なまえ"}
+      </h2>
       <div className="flex items-center gap-2">
-        {data.platforms.map((p) => (
-          <span key={p} className="rounded-full px-3 py-[2px] font-maru text-[12px] font-bold" style={{ background: accent, color: contrastOn(accent) }}>
-            {p}
-          </span>
-        ))}
+        <div className="flex min-w-0 flex-1 flex-wrap gap-2">
+          {data.platforms.map((p) => (
+            <span key={p} className="rounded-full px-3 py-[2px] font-maru text-[12px] font-bold" style={{ background: accent, color: contrastOn(accent) }}>
+              {p}
+            </span>
+          ))}
+        </div>
         {data.showMic && (
-          <span className="ml-auto flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-[3px]" style={{ background: panel, color: text }}>
+          <span className="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-[3px]" style={{ background: panel, color: text }}>
             <Mic size={13} strokeWidth={2.5} color={accent} />
             <span className="font-maru text-[11px] font-bold">ON</span>
             <span className="relative h-[6px] w-[54px] overflow-hidden rounded-full" style={{ background: alpha(accent, 0.2) }}>
@@ -58,6 +56,7 @@ export default function PopCard() {
             <span className="font-maru text-[11px] font-bold">{micText(data.mic)}</span>
           </span>
         )}
+        <FriendStamp color={accent} className="-my-1" style={{ background: "#fff" }} />
       </div>
     </div>
   );
@@ -78,7 +77,7 @@ export default function PopCard() {
 
       {/* 写真と名前 */}
       <div className={`flex shrink-0 flex-col gap-4 ${portrait ? "w-full" : "w-[350px]"}`}>
-        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[290px]" : "h-[360px]") : "h-[340px]"}`}>
+        <div className={`relative shrink-0 ${portrait ? (data.photoMode ? "h-[264px]" : "h-[360px]") : "h-[340px]"}`}>
           <div className="absolute inset-0 rotate-[-2deg] rounded-[30px] bg-white p-2.5" style={{ boxShadow: `0 10px 0 ${alpha(accent, 0.35)}` }}>
             <MainPhoto className="h-full w-full rounded-[22px]" placeholderColor={alpha(text, 0.35)} />
           </div>

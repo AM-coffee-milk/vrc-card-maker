@@ -70,10 +70,10 @@ export const STATUS_INFO: Record<ActiveStatus, { mark: string; label: string; co
 
 export type FriendPolicy = "none" | "mutual" | "anyone" | "close" | "ask";
 
-/** フレンド申請スタンプ。stamp は判子の中に入れる行 */
+/** フレンド申請スタンプの文言。stamp は判子の中での改行位置 */
 export const FRIEND_INFO: Record<Exclude<FriendPolicy, "none">, { label: string; stamp: string[] }> = {
-  mutual: { label: "相互なら◯", stamp: ["相互なら", "◯"] },
-  anyone: { label: "誰でも◯", stamp: ["誰でも", "◯"] },
+  mutual: { label: "相互なら◯", stamp: ["相互なら◯"] },
+  anyone: { label: "誰でも◯", stamp: ["誰でも◯"] },
   close: { label: "仲良くなってから", stamp: ["仲良く", "なってから"] },
   ask: { label: "要相談", stamp: ["要相談"] },
 };
