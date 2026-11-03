@@ -3,7 +3,7 @@
 // ID CARD: カード型のきっちり系
 
 import { STATUS_INFO, STATUS_ORDER, alpha, contrastOn, micText } from "@/lib/card";
-import { FitText, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
+import { FitText, FriendStamp, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
 
 function hash(s: string) {
   let h = 2166136261;
@@ -60,6 +60,15 @@ export default function IdCard() {
       {["left-1.5 top-1.5 border-l-2 border-t-2", "right-1.5 top-1.5 border-r-2 border-t-2", "bottom-1.5 left-1.5 border-b-2 border-l-2", "bottom-1.5 right-1.5 border-b-2 border-r-2"].map((c) => (
         <span key={c} className={`pointer-events-none absolute h-4 w-4 ${c}`} style={{ borderColor: accent }} />
       ))}
+    </div>
+  );
+
+  const nameRow = (
+    <div className="flex items-end gap-3">
+      <div className="min-w-0 flex-1">
+        <Field label="Name" ja="名前" value={data.name} color={text} big />
+      </div>
+      <FriendStamp color={accent} size={66} className="-my-2" />
     </div>
   );
 
@@ -144,7 +153,7 @@ export default function IdCard() {
           <div className="flex gap-5">
             {photo}
             <div className="flex min-w-0 flex-1 flex-col gap-3">
-              <Field label="Name" ja="名前" value={data.name} color={text} big />
+              {nameRow}
               <Field label="X" ja="アカウント" value={xId} color={text} />
               <Field label="Weekday" ja="平日" value={data.activeTime} color={text} />
               <Field label="Holiday" ja="休日" value={data.activeHoliday} color={text} />
@@ -164,7 +173,7 @@ export default function IdCard() {
             {meta}
           </div>
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
-            <Field label="Name" ja="名前" value={data.name} color={text} big />
+            {nameRow}
             <div className="grid grid-cols-3 gap-x-5">
               <Field label="X" ja="アカウント" value={xId} color={text} />
               <Field label="Weekday" ja="平日" value={data.activeTime} color={text} />

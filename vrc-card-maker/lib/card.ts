@@ -37,6 +37,8 @@ export interface CardData {
   favorites: string;
   bio: string;
   platforms: string[];
+  /** フレンド申請の受け付け方 */
+  friend: FriendPolicy;
   mic: number; // マイクを ON にしている割合 (0-100)
   showMic: boolean;
   showLegend: boolean;
@@ -64,6 +66,16 @@ export const STATUS_INFO: Record<ActiveStatus, { mark: string; label: string; co
   ok: { mark: "○", label: "OK", color: "#2fb67c" },
   ask: { mark: "△", label: "要相談", color: "#e9a019" },
   ng: { mark: "×", label: "NG", color: "#8a8f98" },
+};
+
+export type FriendPolicy = "none" | "mutual" | "anyone" | "close" | "ask";
+
+/** フレンド申請スタンプ。stamp は判子の中に入れる行 */
+export const FRIEND_INFO: Record<Exclude<FriendPolicy, "none">, { label: string; stamp: string[] }> = {
+  mutual: { label: "相互なら◯", stamp: ["相互なら", "◯"] },
+  anyone: { label: "誰でも◯", stamp: ["誰でも", "◯"] },
+  close: { label: "仲良くなってから", stamp: ["仲良く", "なってから"] },
+  ask: { label: "要相談", stamp: ["要相談"] },
 };
 
 export const PRESET_TAGS = ["撫で", "近距離", "お砂糖", "武器", "暴言・暴力", "下ネタ", "V睡", "大人数", "撫で音"];
@@ -131,6 +143,7 @@ export function defaultCard(): CardData {
     bio: "",
     platforms: ["PCVR"],
     mic: 100,
+    friend: "none",
     showMic: true,
     showLegend: true,
     tags: PRESET_TAGS.map((label) => ({ id: newId(), label, status: "none" })),

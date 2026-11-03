@@ -4,7 +4,7 @@
 
 import { Mic } from "lucide-react";
 import { STATUS_INFO, alpha, contrastOn, micText } from "@/lib/card";
-import { FitText, MainPhoto, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
+import { FitText, FriendStamp, MainPhoto, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function Sparkle({ size, color, className = "" }: { size: number; color: string; className?: string }) {
   return (
@@ -35,9 +35,13 @@ export default function PopCard() {
 
   const nameBlock = (
     <div className="pointer-events-none flex min-w-0 flex-col gap-2">
-      <h2 className="truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
-        {data.name || "なまえ"}
-      </h2>
+      <div className="flex items-center gap-3">
+        <h2 className="min-w-0 truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
+          {data.name || "なまえ"}
+        </h2>
+        {/* 行の高さを増やさないよう上下にはみ出させる */}
+        <FriendStamp color={accent} size={68} className="-my-3" style={{ background: "#fff" }} />
+      </div>
       <div className="flex items-center gap-2">
         {data.platforms.map((p) => (
           <span key={p} className="rounded-full px-3 py-[2px] font-maru text-[12px] font-bold" style={{ background: accent, color: contrastOn(accent) }}>

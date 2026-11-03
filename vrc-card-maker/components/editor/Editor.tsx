@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ImagePlus, Plus, RotateCcw, Trash2, X } from "lucide-react";
-import { PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, micText, newId, type CardData, type Status, type TemplateId } from "@/lib/card";
+import { FRIEND_INFO, PLATFORMS, PRESET_TAGS, STATUS_INFO, STATUS_ORDER, TEMPLATES, micText, newId, type CardData, type Status, type TemplateId } from "@/lib/card";
 import { fileToDataUrl } from "@/lib/image";
 import { Check, Field, Section, Slider, Toggle, inputClass } from "./ui";
 
@@ -234,6 +234,19 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
                 {p}
               </Toggle>
             ))}
+          </div>
+        </div>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-neutral-500">フレンド申請 (名前の横にスタンプで表示)</span>
+          <div className="grid grid-cols-3 gap-1.5">
+            {(Object.keys(FRIEND_INFO) as (keyof typeof FRIEND_INFO)[]).map((k) => (
+              <Toggle key={k} active={data.friend === k} onClick={() => set({ friend: k })}>
+                {FRIEND_INFO[k].label}
+              </Toggle>
+            ))}
+            <Toggle active={data.friend === "none"} onClick={() => set({ friend: "none" })}>
+              表示しない
+            </Toggle>
           </div>
         </div>
         <div className="space-y-3 rounded-xl border border-neutral-800 bg-black p-3">

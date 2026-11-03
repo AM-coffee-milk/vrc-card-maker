@@ -3,7 +3,7 @@
 // STREET: 写真を大きく見せるゲーミング系 (元デザインを踏襲)
 
 import { STATUS_INFO, alpha, contrastOn } from "@/lib/card";
-import { FitText, MainPhoto, MicRing, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
+import { FitText, FriendStamp, MainPhoto, MicRing, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function SectionLabel({ children, color, accent, right }: { children: string; color: string; accent: string; right?: React.ReactNode }) {
   return (
@@ -39,6 +39,7 @@ export default function StreetCard() {
 
         <div className={`pointer-events-none absolute bottom-7 left-6 rounded-r-2xl bg-black/60 px-4 py-3 ${data.showMic ? "right-[104px]" : "right-6"}`} style={{ borderLeft: `6px solid ${accent}` }}>
           <h2 className="truncate font-oswald text-[38px] font-bold uppercase italic leading-[1.1] text-white">{data.name || "NAME"}</h2>
+          <FriendStamp color={accent} className="absolute -top-[48px] right-2" style={{ background: "rgba(0,0,0,0.6)" }} />
           {data.platforms.length > 0 && (
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {data.platforms.map((p) => (

@@ -4,7 +4,7 @@
 
 import { createContext, useContext, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { ImageIcon } from "lucide-react";
-import { STATUS_INFO, STATUS_ORDER, micText, type CardData, type PhotoFrame, type Status, type Tag } from "@/lib/card";
+import { FRIEND_INFO, STATUS_INFO, STATUS_ORDER, micText, type CardData, type PhotoFrame, type Status, type Tag } from "@/lib/card";
 
 interface CardCtx {
   data: CardData;
@@ -146,4 +146,25 @@ export function infoRows(d: CardData) {
     { key: "holiday", label: "Holiday", ja: "休日", value: d.activeHoliday },
     { key: "fav", label: "Favorite", ja: "すきなもの", value: d.favorites },
   ].filter((r) => r.value.trim());
+}
+
+/** 名前の横に押す、フレンド申請の判子 */
+export function FriendStamp({ color, size = 72, className = "", style }: { color: string; size?: number; className?: string; style?: CSSProperties }) {
+  const { data } = useCard();
+  if (data.friend === "none") return null;
+  const info = FRIEND_INFO[data.friend];
+  return (
+    <div
+      className={`pointer-events-none flex shrink-0 rotate-[-10deg] flex-col items-center justify-center rounded-full text-center ${className}`}
+      style={{ width: size, height: size, border: `3px double ${color}`, color, ...style }}
+    >
+      <span className="font-oswald text-[9px] font-bold leading-none tracking-[0.2em]">FRIEND</span>
+      <span className="my-[3px] h-px w-[64%]" style={{ background: color }} />
+      {info.stamp.map((line) => (
+        <span key={line} className={`font-black leading-[1.2] ${line === "◯" ? "text-[15px]" : "text-[12px]"}`}>
+          {line}
+        </span>
+      ))}
+    </div>
+  );
 }
