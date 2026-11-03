@@ -141,7 +141,6 @@ export function MicRing({ value, size, stroke, color, track, textColor, label = 
 /** 入力済みのプロフィール項目 */
 export function infoRows(d: CardData) {
   return [
-    { key: "vrc", label: "VRChat", ja: "VRChat", value: d.vrcName },
     { key: "x", label: "X", ja: "X", value: d.xId ? (d.xId.startsWith("@") ? d.xId : `@${d.xId}`) : "" },
     { key: "time", label: "Active", ja: "いる時間", value: d.activeTime },
     { key: "fav", label: "Favorite", ja: "すきなもの", value: d.favorites },

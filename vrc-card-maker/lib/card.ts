@@ -29,7 +29,6 @@ export interface CardData {
   orientation: Orientation;
   photoMode: boolean;
   name: string;
-  vrcName: string;
   xId: string;
   activeTime: string;
   favorites: string;
@@ -122,7 +121,6 @@ export function defaultCard(): CardData {
     orientation: "landscape",
     photoMode: false,
     name: "",
-    vrcName: "",
     xId: "",
     activeTime: "",
     favorites: "",

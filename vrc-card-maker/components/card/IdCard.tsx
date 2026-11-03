@@ -45,10 +45,11 @@ export default function IdCard() {
   const portrait = data.orientation === "portrait";
   const onAccent = contrastOn(accent);
   const tags = activeTags(data.tags);
-  const serial = String(hash(data.name + data.vrcName) % 1000000).padStart(6, "0");
+  const serial = String(hash(data.name) % 1000000).padStart(6, "0");
   const today = new Date();
   const issued = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
-  const latin = (data.vrcName || data.xId || "UNKNOWN").toUpperCase().replace(/[^A-Z0-9]/g, "<");
+  const latinSrc = (data.xId.replace(/^@/, "") || data.name).toUpperCase().replace(/[^A-Z0-9]/g, "<");
+  const latin = /[A-Z0-9]/.test(latinSrc) ? latinSrc : "UNKNOWN";
   const mrz = `IDVRC<${latin}<<${data.platforms.join("<").toUpperCase()}`.padEnd(44, "<").slice(0, 44);
   const xId = data.xId ? (data.xId.startsWith("@") ? data.xId : `@${data.xId}`) : "";
 
@@ -144,15 +145,12 @@ export default function IdCard() {
             {photo}
             <div className="flex min-w-0 flex-1 flex-col gap-3">
               <Field label="Name" ja="名前" value={data.name} color={text} big />
-              <Field label="VRChat" ja="表示名" value={data.vrcName} color={text} />
               <Field label="X" ja="アカウント" value={xId} color={text} />
+              <Field label="Active" ja="いる時間" value={data.activeTime} color={text} />
               <div className="mt-auto">{meta}</div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Active" ja="いる時間" value={data.activeTime} color={text} />
-            <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
-          </div>
+          <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
           {subPhotos}
           {remarks}
           {permissions}
@@ -167,10 +165,11 @@ export default function IdCard() {
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
             <Field label="Name" ja="名前" value={data.name} color={text} big />
             <div className="grid grid-cols-2 gap-x-5 gap-y-3">
-              <Field label="VRChat" ja="表示名" value={data.vrcName} color={text} />
               <Field label="X" ja="アカウント" value={xId} color={text} />
               <Field label="Active" ja="いる時間" value={data.activeTime} color={text} />
-              <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
+              <div className="col-span-2">
+                <Field label="Favorite" ja="好きなもの" value={data.favorites} color={text} />
+              </div>
             </div>
             {remarks}
             {permissions}

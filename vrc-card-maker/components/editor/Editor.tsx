@@ -202,22 +202,21 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
       </Section>
 
       <Section no="04" title="プロフィール">
-        <Field label="名前" hint={`${data.name.length}/24`}>
-          <input className={inputClass} value={data.name} maxLength={24} onChange={(e) => set({ name: e.target.value })} placeholder="あなたの名前" />
+        <Field label="名前 (VRChat での名前)" hint={`${data.name.length}/24`}>
+          <input className={inputClass} value={data.name} maxLength={24} onChange={(e) => set({ name: e.target.value })} placeholder="VRChat での名前" />
         </Field>
         <div className="grid grid-cols-2 gap-2">
-          <Field label="VRChat 表示名">
-            <input className={inputClass} value={data.vrcName} maxLength={32} onChange={(e) => set({ vrcName: e.target.value })} placeholder="VRChat の表示名" />
-          </Field>
           <Field label="X (Twitter) ID">
             <input className={inputClass} value={data.xId} maxLength={32} onChange={(e) => set({ xId: e.target.value })} placeholder="@your_id" />
           </Field>
           <Field label="よくいる時間">
             <input className={inputClass} value={data.activeTime} maxLength={32} onChange={(e) => set({ activeTime: e.target.value })} placeholder="平日22時〜" />
           </Field>
-          <Field label="好きなもの">
-            <input className={inputClass} value={data.favorites} maxLength={32} onChange={(e) => set({ favorites: e.target.value })} placeholder="ワールド巡り" />
-          </Field>
+          <div className="col-span-2">
+            <Field label="好きなもの">
+              <input className={inputClass} value={data.favorites} maxLength={32} onChange={(e) => set({ favorites: e.target.value })} placeholder="ワールド巡り" />
+            </Field>
+          </div>
         </div>
         <Field label="自己紹介" hint={`${data.bio.length}/300`}>
           <textarea className={`${inputClass} resize-y`} rows={4} value={data.bio} maxLength={300} onChange={(e) => set({ bio: e.target.value })} placeholder="自己紹介を書いてね。長い文章は自動で小さくなります" />
