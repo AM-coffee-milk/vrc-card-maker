@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Copy, ExternalLink, AlertTriangle } from "lucide-react";
-import { detectInApp, externalUrl, type InAppInfo } from "@/lib/inapp";
+import { AlertTriangle, Check, Copy } from "lucide-react";
+import { detectInApp, type InAppInfo } from "@/lib/inapp";
 
 /** アプリ内ブラウザかどうか (SSR 中と判定前は null) */
 export function useInApp() {
@@ -10,7 +10,8 @@ export function useInApp() {
   useEffect(() => {
     // 開発中に見た目を確かめるための切り替え (?inapp=android / ?inapp=ios)
     const debug = process.env.NODE_ENV !== "production" ? new URLSearchParams(location.search).get("inapp") : null;
-    // 開いた直後に自動で外部ブラウザへ飛ばすのは、X では「実行できるアプリがありません」のエラーになるのでしない
+    // サイトから外部ブラウザを開く方法 (intent:// など) は X では「実行できるアプリがありません」になるので使わない。
+    // アプリ自身のメニューから開いてもらう
     setInfo(debug ? { inApp: true, android: debug === "android", app: "X" } : detectInApp(navigator.userAgent));
   }, []);
   return info;
@@ -46,23 +47,18 @@ export default function InAppNotice({ info, compact = false }: { info: InAppInfo
           ? "ブラウザで開き直してください。入力内容は引き継がれないので、ブラウザでもう一度作る必要があります。"
           : "入力内容はブラウザに引き継げないので、作り始める前にブラウザで開き直してください。"}
       </p>
-      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <p className="rounded-xl bg-black/30 px-3 py-2 text-[12px] font-bold leading-relaxed sm:col-span-2">
+      <div className="mt-3 flex flex-col gap-2">
+        <p className="rounded-xl bg-black/30 px-3 py-2.5 text-[13px] font-bold leading-relaxed">
           {info.android ? (
             <>
-              画面下の URL の横にある <b className="text-amber-300">︙</b> から「<b className="text-amber-300">ブラウザで開く</b>」を選んでください
+              画面下の URL の横にある <b className="text-amber-300">︙</b> から<b className="whitespace-nowrap text-amber-300">「ブラウザで開く」</b>を選んでください
             </>
           ) : (
             <>
-              画面の <b className="text-amber-300">…</b> や共有ボタンから「<b className="text-amber-300">ブラウザで開く</b>」「Safariで開く」を選んでください
+              画面の <b className="text-amber-300">…</b> や共有ボタンから<b className="whitespace-nowrap text-amber-300">「ブラウザで開く」</b>「Safariで開く」を選んでください
             </>
           )}
         </p>
-        {info.android && (
-          <a href={externalUrl(url)} className="flex items-center justify-center gap-1.5 rounded-xl bg-amber-400 py-2.5 text-[14px] font-black text-black active:scale-95">
-            <ExternalLink size={16} /> Chromeで開く
-          </a>
-        )}
         <button type="button" onClick={copy} className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-400/60 py-2.5 text-[13px] font-bold active:scale-95">
           {copied ? <Check size={15} /> : <Copy size={15} />}
           {copied ? "コピーしました" : "URLをコピー"}
