@@ -7,6 +7,7 @@ import Editor from "@/components/editor/Editor";
 import InAppNotice, { useInApp } from "@/components/InAppNotice";
 import { CARD_SIZE, defaultCard, normalizeCard, type CardData } from "@/lib/card";
 import { renderCard } from "@/lib/image";
+import { FAQ, FEATURES, HOW_TO } from "@/lib/site";
 import { loadState, saveState } from "@/lib/storage";
 
 interface Result {
@@ -110,8 +111,11 @@ export default function VRCCardMaker() {
     <main className="min-h-screen bg-black pb-28 text-white lg:pb-10">
       <header className="mx-auto flex max-w-[1440px] items-end justify-between px-4 py-5 lg:px-8">
         <div>
-          <h1 className="inline-block border-b-2 border-white pb-1 text-xl font-black uppercase italic tracking-tighter">VRC IDENTITY GEN</h1>
-          <p className="mt-1.5 text-[11px] font-bold text-neutral-500">VRChat 自己紹介カードメーカー</p>
+          {/* 検索で「VRChat 自己紹介カード」と一緒に読まれるよう、日本語の名前も見出しに含める */}
+          <h1>
+            <span className="inline-block border-b-2 border-white pb-1 text-xl font-black uppercase italic tracking-tighter">VRC IDENTITY GEN</span>
+            <span className="mt-1.5 block text-[11px] font-bold text-neutral-500">VRChat 自己紹介カードメーカー</span>
+          </h1>
         </div>
         <button type="button" onClick={resetAll} className="flex items-center gap-1 text-[11px] font-bold text-neutral-500 hover:text-white">
           <RotateCcw size={12} /> 最初から
@@ -168,6 +172,45 @@ export default function VRCCardMaker() {
           <p className="mt-6 text-center text-[10px] text-neutral-700">VRC IDENTITY GEN ・ 写真と入力内容はお使いの端末内だけで処理され、外部には送信されません（閲覧数のみ Cloudflare Web Analytics で集計しています。Cookie は使いません）</p>
         </aside>
       </div>
+
+      {/* サイトの説明 (使い方・できること・よくある質問)。検索エンジンや AI にも読まれる */}
+      <section className="mx-auto mt-16 max-w-3xl px-4 text-neutral-300 lg:px-8">
+        <h2 className="text-lg font-black text-white">VRChatの自己紹介カードを、無料・登録なしで</h2>
+        <p className="mt-3 text-[13px] leading-relaxed text-neutral-400">
+          VRC IDENTITY GEN は、VRChat 用の自己紹介カード（プロフィールカード）をブラウザで作れるツールです。写真を選んでプロフィールを書くだけで、X や Discord にそのまま貼れる画像ができます。PC でもスマホでも使えます。
+        </p>
+
+        <h2 className="mt-10 text-base font-black text-white">使い方</h2>
+        <ol className="mt-3 space-y-3">
+          {HOW_TO.map((s, i) => (
+            <li key={s.title} className="flex gap-3 text-[13px] leading-relaxed">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[12px] font-black text-black">{i + 1}</span>
+              <span>
+                <b className="text-white">{s.title}</b>
+                <br />
+                <span className="text-neutral-400">{s.text}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+
+        <h2 className="mt-10 text-base font-black text-white">できること</h2>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-[13px] leading-relaxed text-neutral-400">
+          {FEATURES.map((f) => (
+            <li key={f}>{f}</li>
+          ))}
+        </ul>
+
+        <h2 className="mt-10 text-base font-black text-white">よくある質問</h2>
+        <dl className="mt-3 divide-y divide-neutral-800 border-y border-neutral-800">
+          {FAQ.map(({ q, a }) => (
+            <div key={q} className="py-3">
+              <dt className="text-[13px] font-bold text-white">{q}</dt>
+              <dd className="mt-1 text-[13px] leading-relaxed text-neutral-400">{a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
 
       {/* スマホ用の保存ボタン */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-neutral-800 bg-black/90 p-3 backdrop-blur lg:hidden">
