@@ -157,7 +157,7 @@ export default function VRCCardMaker() {
             {/* 保存データの復元前に編集されると上書きされるので、読み込み後に表示する */}
             {loaded && <Editor data={data} update={update} />}
           </div>
-          <p className="mt-6 text-center text-[10px] text-neutral-700">VRC IDENTITY GEN ・ 画像はすべてお使いの端末内で処理され、外部には送信されません</p>
+          <p className="mt-6 text-center text-[10px] text-neutral-700">VRC IDENTITY GEN ・ 写真と入力内容はお使いの端末内だけで処理され、外部には送信されません（閲覧数のみ Cloudflare Web Analytics で集計しています。Cookie は使いません）</p>
         </aside>
       </div>
 

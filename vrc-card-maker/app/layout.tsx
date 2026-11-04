@@ -21,6 +21,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ja">
       <body className={`${noto.variable} ${maru.variable} ${oswald.variable} ${mono.variable} font-sans antialiased`}>
         {children}
+        {/* 閲覧数の集計 (Cloudflare Web Analytics、Cookie なし)。開発中は数えない */}
+        {process.env.NODE_ENV === "production" && (
+          <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d7ce53cf763f47e5bdb995a66176cd22"}' />
+        )}
       </body>
     </html>
   );
