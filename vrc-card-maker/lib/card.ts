@@ -41,6 +41,8 @@ export interface CardData {
   platforms: string[];
   /** フレンド申請の受け付け方 */
   friend: FriendPolicy;
+  /** 性別 (自由入力。空なら表示しない) */
+  gender: string;
   mic: number; // マイクを ON にしている割合 (0-100)
   showMic: boolean;
   showLegend: boolean;
@@ -148,6 +150,7 @@ export function defaultCard(): CardData {
     platforms: ["PCVR"],
     mic: 100,
     friend: "none",
+    gender: "",
     showMic: true,
     showLegend: true,
     tags: PRESET_TAGS.map((label) => ({ id: newId(), label, status: "none" })),
@@ -168,6 +171,8 @@ export function normalizeCard(raw: unknown): CardData {
     ...base,
     ...r,
     version: 1,
+    // 以前の選択式で保存されたデータは空に戻す
+    gender: typeof r.gender === "string" && !["none", "male", "female", "any"].includes(r.gender) ? r.gender : "",
     colors: { ...base.colors, ...(r.colors ?? {}) },
     photo: { ...base.photo, ...(r.photo ?? {}) },
     tags: Array.isArray(r.tags) ? r.tags : base.tags,

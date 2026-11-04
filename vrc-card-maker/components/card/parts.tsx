@@ -225,3 +225,42 @@ export function FriendStamp({ onAccent = false, oneLine = false, className = "" 
     </div>
   );
 }
+
+/**
+ * 「性別｜名前」。性別が空なら名前だけ。
+ * 入りきらないときは行全体を縮小し (最小 60%)、それでも長い名前は名前の側だけ省略する
+ */
+export function NameText({ name, gender }: { name: string; gender: string }) {
+  const g = gender.trim();
+  const ref = useRef<HTMLSpanElement>(null);
+  const [k, setK] = useState(1);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const box = el?.parentElement;
+    if (!el || !box) return;
+    const fit = () => {
+      // 縮小前の幅で測る (文字はすべて em 指定なので幅は倍率に比例する)
+      el.style.fontSize = "1em";
+      const need = Array.from(el.children).reduce((w, c) => w + (c as HTMLElement).scrollWidth, 0);
+      const next = Math.max(0.6, Math.min(1, box.clientWidth / Math.max(need, 1)));
+      el.style.fontSize = `${next}em`;
+      setK(next);
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(box);
+    document.fonts?.ready.then(fit);
+    return () => ro.disconnect();
+  }, [name, g]);
+  return (
+    <span ref={ref} className="flex min-w-0 max-w-full items-baseline" style={{ fontSize: `${k}em` }}>
+      {g && (
+        <>
+          <span className="shrink-0 whitespace-nowrap text-[0.55em]">{g}</span>
+          <span className="shrink-0 px-[0.12em] text-[0.55em] opacity-50">｜</span>
+        </>
+      )}
+      <span className="min-w-0 truncate">{name}</span>
+    </span>
+  );
+}

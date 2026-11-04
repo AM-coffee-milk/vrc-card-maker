@@ -3,7 +3,7 @@
 // ID CARD: カード型のきっちり系
 
 import { STATUS_INFO, STATUS_ORDER, alpha, contrastOn, micText } from "@/lib/card";
-import { FitText, FriendStamp, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
+import { FitText, FriendStamp, NameText, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
 
 function hash(s: string) {
   let h = 2166136261;
@@ -28,13 +28,13 @@ function Barcode({ seed, color, width, height }: { seed: string; color: string; 
   );
 }
 
-function Field({ label, ja, value, color, big }: { label: string; ja: string; value: string; color: string; big?: boolean }) {
+function Field({ label, ja, value, color, big, children }: { label: string; ja: string; value: string; color: string; big?: boolean; children?: React.ReactNode }) {
   return (
     <div className="min-w-0 pb-1" style={{ borderBottom: `1px solid ${alpha(color, 0.18)}` }}>
       <div className="font-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: alpha(color, 0.5) }}>
         {label} <span className="tracking-normal">/ {ja}</span>
       </div>
-      <div className={`truncate font-bold ${big ? "text-[30px] leading-[1.25]" : "text-[15px] leading-snug"}`}>{value || "—"}</div>
+      {children ?? <div className={`truncate font-bold ${big ? "text-[30px] leading-[1.25]" : "text-[15px] leading-snug"}`}>{value || "—"}</div>}
     </div>
   );
 }
@@ -61,11 +61,19 @@ export default function IdCard() {
 
   // 縦向きは右の列が狭く名前が切れるので、スタンプはヘッダーの右に押す
   const nameRow = portrait ? (
-    <Field label="Name" ja="名前" value={data.name} color={text} big />
+    <Field label="Name" ja="名前" value={data.name} color={text}>
+      <div className="flex min-w-0 items-baseline text-[30px] font-bold leading-[1.25]">
+        <NameText name={data.name || "—"} gender={data.gender} />
+      </div>
+    </Field>
   ) : (
     <div className="flex items-end gap-3">
       <div className="min-w-0 flex-1">
-        <Field label="Name" ja="名前" value={data.name} color={text} big />
+        <Field label="Name" ja="名前" value={data.name} color={text}>
+      <div className="flex min-w-0 items-baseline text-[30px] font-bold leading-[1.25]">
+        <NameText name={data.name || "—"} gender={data.gender} />
+      </div>
+    </Field>
       </div>
       <FriendStamp className="-mt-4 mb-1.5" />
     </div>

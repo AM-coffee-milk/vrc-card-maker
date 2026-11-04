@@ -3,7 +3,7 @@
 // POP: まるっとかわいいパステル系
 
 import { STATUS_INFO, alpha, contrastOn, micText } from "@/lib/card";
-import { FitText, FriendStamp, MainPhoto, MicMeter, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
+import { FitText, FriendStamp, MainPhoto, MicMeter, NameText, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function Sparkle({ size, color, className = "" }: { size: number; color: string; className?: string }) {
   return (
@@ -41,16 +41,17 @@ export default function PopCard() {
       ))}
     </div>
   );
-  const mic = data.showMic && <MicMeter fill value={data.mic} color={accent} track={alpha(accent, 0.2)} className="rounded-2xl px-3 py-1.5 font-maru" style={{ background: panel, color: text }} />;
+  const mic = data.showMic && <MicMeter fill value={data.mic} color={accent} track={alpha(accent, 0.2)} className="min-w-[170px] rounded-2xl px-3 py-1.5 font-maru" style={{ background: panel, color: text }} />;
 
   // マイクとスタンプは重ならないよう同じ行に並べる (横向きは幅が狭いのでプラットフォームを別の行にする)
   const nameBlock = (
     <div className="pointer-events-none flex min-w-0 flex-col gap-2">
-      <h2 className="truncate font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
-        {data.name || "なまえ"}
+      <h2 className="flex min-w-0 items-baseline font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
+        <NameText name={data.name || "なまえ"} gender={data.gender} />
       </h2>
       {portrait ? (
-        <div className="flex items-center gap-3">
+        // プラットフォームが多いときはマイクを次の行に送る (潰さない)
+        <div className="flex flex-wrap items-center gap-3">
           {platforms}
           {mic || <div className="flex-1" />}
           <FriendStamp oneLine />

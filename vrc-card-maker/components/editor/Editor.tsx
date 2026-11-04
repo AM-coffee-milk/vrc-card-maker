@@ -261,6 +261,9 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
             ))}
           </div>
         </div>
+        <Field label="性別" hint="空欄なら表示しません">
+          <input className={inputClass} value={data.gender} maxLength={10} onChange={(e) => set({ gender: e.target.value })} placeholder="オス / メス / どっちでも など" />
+        </Field>
         <div className="space-y-1">
           <span className="text-[10px] font-bold text-neutral-500">フレンド申請 (名前の横にスタンプで表示)</span>
           <div className="grid grid-cols-3 gap-1.5">
