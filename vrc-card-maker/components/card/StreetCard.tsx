@@ -2,7 +2,7 @@
 
 // STREET: 写真を大きく見せるゲーミング系 (元デザインを踏襲)
 
-import { STATUS_INFO, alpha } from "@/lib/card";
+import { STATUS_INFO, genderLabel, alpha } from "@/lib/card";
 import { FitText, FriendStamp, MainPhoto, MicMeter, NameText, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function SectionLabel({ children, color, accent, right }: { children: string; color: string; accent: string; right?: React.ReactNode }) {
@@ -48,7 +48,7 @@ export default function StreetCard() {
         <div className="flex shrink-0 items-center gap-4 bg-neutral-950 px-9 py-3" style={{ borderLeft: `6px solid ${accent}` }}>
           <div className="pointer-events-none min-w-0 flex-1">
             <h2 className="flex min-w-0 items-baseline font-oswald text-[36px] font-bold uppercase italic leading-[1.1] text-white">
-              <NameText name={data.name || "NAME"} gender={data.gender} />
+              <NameText name={data.name || "NAME"} gender={genderLabel(data)} />
             </h2>
             {data.platforms.length > 0 && (
               <div className="mt-2 flex flex-wrap items-center gap-2">

@@ -256,7 +256,8 @@ export function NameText({ name, gender }: { name: string; gender: string }) {
     <span ref={ref} className="flex min-w-0 max-w-full items-baseline" style={{ fontSize: `${k}em` }}>
       {g && (
         <>
-          <span className="shrink-0 whitespace-nowrap text-[0.55em]">{g}</span>
+          {/* ♂ ♀ は1文字なので小さいと読めない。文字のときは名前より控えめにする */}
+          <span className={`shrink-0 whitespace-nowrap ${/^[♀♂]︎?$/.test(g) ? "text-[0.85em]" : "text-[0.55em]"}`}>{g}</span>
           <span className="shrink-0 px-[0.12em] text-[0.55em] opacity-50">｜</span>
         </>
       )}

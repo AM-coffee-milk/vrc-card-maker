@@ -261,9 +261,26 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
             ))}
           </div>
         </div>
-        <Field label="性別" hint="空欄なら表示しません">
-          <input className={inputClass} value={data.gender} maxLength={10} onChange={(e) => set({ gender: e.target.value })} placeholder="オス / メス / どっちでも など" />
-        </Field>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-neutral-500">性別 (名前の前に表示)</span>
+          <div className="grid grid-cols-4 gap-1.5">
+            {(
+              [
+                ["male", "♂"],
+                ["female", "♀"],
+                ["custom", "自由記述"],
+                ["none", "表示しない"],
+              ] as const
+            ).map(([k, label]) => (
+              <Toggle key={k} active={data.genderMode === k} onClick={() => set({ genderMode: k })}>
+                {label}
+              </Toggle>
+            ))}
+          </div>
+          {data.genderMode === "custom" && (
+            <input className={inputClass} value={data.genderText} maxLength={8} onChange={(e) => set({ genderText: e.target.value })} placeholder="自由に書けます (8文字まで)" aria-label="性別 (自由記述)" />
+          )}
+        </div>
         <div className="space-y-1">
           <span className="text-[10px] font-bold text-neutral-500">フレンド申請 (名前の横にスタンプで表示)</span>
           <div className="grid grid-cols-3 gap-1.5">

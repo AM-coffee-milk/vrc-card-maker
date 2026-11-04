@@ -2,7 +2,7 @@
 
 // POP: まるっとかわいいパステル系
 
-import { STATUS_INFO, alpha, contrastOn, micText } from "@/lib/card";
+import { STATUS_INFO, genderLabel, alpha, contrastOn, micText } from "@/lib/card";
 import { FitText, FriendStamp, MainPhoto, MicMeter, NameText, SubPhoto, activeTags, infoRows, useCard, usedStatuses } from "./parts";
 
 function Sparkle({ size, color, className = "" }: { size: number; color: string; className?: string }) {
@@ -47,7 +47,7 @@ export default function PopCard() {
   const nameBlock = (
     <div className="pointer-events-none flex min-w-0 flex-col gap-2">
       <h2 className="flex min-w-0 items-baseline font-maru text-[36px] font-black leading-[1.15]" style={{ color: text }}>
-        <NameText name={data.name || "なまえ"} gender={data.gender} />
+        <NameText name={data.name || "なまえ"} gender={genderLabel(data)} />
       </h2>
       {portrait ? (
         // プラットフォームが多いときはマイクを次の行に送る (潰さない)

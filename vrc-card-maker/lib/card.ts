@@ -41,8 +41,9 @@ export interface CardData {
   platforms: string[];
   /** フレンド申請の受け付け方 */
   friend: FriendPolicy;
-  /** 性別 (自由入力。空なら表示しない) */
-  gender: string;
+  /** 性別の出し方。custom のときは genderText をそのまま出す */
+  genderMode: GenderMode;
+  genderText: string;
   mic: number; // マイクを ON にしている割合 (0-100)
   showMic: boolean;
   showLegend: boolean;
@@ -83,6 +84,18 @@ export const FRIEND_INFO: Record<Exclude<FriendPolicy, "none">, { label: string;
   close: { label: "仲良くなってから", stamp: ["仲良く", "なってから"] },
   ask: { label: "要相談", stamp: ["要相談"] },
 };
+
+export type GenderMode = "none" | "male" | "female" | "custom";
+
+// ︎ を付けて絵文字ではなく文字の記号として出す
+const GENDER_MARK = { male: "♂︎", female: "♀︎" };
+
+/** 名前の前に出す性別。表示しないときは空文字 */
+export function genderLabel(d: Pick<CardData, "genderMode" | "genderText">) {
+  if (d.genderMode === "male" || d.genderMode === "female") return GENDER_MARK[d.genderMode];
+  if (d.genderMode === "custom") return (d.genderText ?? "").trim();
+  return "";
+}
 
 export const PRESET_TAGS = ["撫で", "近距離", "お砂糖", "武器", "暴言・暴力", "下ネタ", "V睡", "大人数", "撫で音"];
 
@@ -150,7 +163,8 @@ export function defaultCard(): CardData {
     platforms: ["PCVR"],
     mic: 100,
     friend: "none",
-    gender: "",
+    genderMode: "none",
+    genderText: "",
     showMic: true,
     showLegend: true,
     tags: PRESET_TAGS.map((label) => ({ id: newId(), label, status: "none" })),
@@ -166,13 +180,12 @@ export function defaultCard(): CardData {
 export function normalizeCard(raw: unknown): CardData {
   const base = defaultCard();
   if (!raw || typeof raw !== "object") return base;
-  const r = raw as Partial<CardData>;
+  const r = raw as Partial<CardData> & { gender?: unknown };
   return {
     ...base,
     ...r,
     version: 1,
-    // 以前の選択式で保存されたデータは空に戻す
-    gender: typeof r.gender === "string" && !["none", "male", "female", "any"].includes(r.gender) ? r.gender : "",
+    ...legacyGender(r),
     colors: { ...base.colors, ...(r.colors ?? {}) },
     photo: { ...base.photo, ...(r.photo ?? {}) },
     tags: Array.isArray(r.tags) ? r.tags : base.tags,
@@ -180,6 +193,14 @@ export function normalizeCard(raw: unknown): CardData {
     subImages: [0, 1, 2].map((i) => r.subImages?.[i] ?? null),
     subFrames: [0, 1, 2].map((i) => ({ ...DEFAULT_FRAME, ...(r.subFrames?.[i] ?? {}) })),
   };
+}
+
+/** 以前の自由入力だけの版 (gender: string) で保存されたデータを引き継ぐ */
+function legacyGender(r: Partial<CardData> & { gender?: unknown }): Pick<CardData, "genderMode" | "genderText"> {
+  const mode = r.genderMode && ["none", "male", "female", "custom"].includes(r.genderMode) ? r.genderMode : null;
+  if (mode) return { genderMode: mode, genderText: typeof r.genderText === "string" ? r.genderText : "" };
+  const old = typeof r.gender === "string" && !["none", "male", "female", "any"].includes(r.gender) ? r.gender.trim() : "";
+  return old ? { genderMode: "custom", genderText: old } : { genderMode: "none", genderText: "" };
 }
 
 /** マイク ON 率の表示 (0% は無言勢) */

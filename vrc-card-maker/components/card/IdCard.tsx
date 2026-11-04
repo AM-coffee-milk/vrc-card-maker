@@ -2,7 +2,7 @@
 
 // ID CARD: カード型のきっちり系
 
-import { STATUS_INFO, STATUS_ORDER, alpha, contrastOn, micText } from "@/lib/card";
+import { STATUS_INFO, genderLabel, STATUS_ORDER, alpha, contrastOn, micText } from "@/lib/card";
 import { FitText, FriendStamp, NameText, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
 
 function hash(s: string) {
@@ -63,7 +63,7 @@ export default function IdCard() {
   const nameRow = portrait ? (
     <Field label="Name" ja="名前" value={data.name} color={text}>
       <div className="flex min-w-0 items-baseline text-[30px] font-bold leading-[1.25]">
-        <NameText name={data.name || "—"} gender={data.gender} />
+        <NameText name={data.name || "—"} gender={genderLabel(data)} />
       </div>
     </Field>
   ) : (
@@ -71,7 +71,7 @@ export default function IdCard() {
       <div className="min-w-0 flex-1">
         <Field label="Name" ja="名前" value={data.name} color={text}>
       <div className="flex min-w-0 items-baseline text-[30px] font-bold leading-[1.25]">
-        <NameText name={data.name || "—"} gender={data.gender} />
+        <NameText name={data.name || "—"} gender={genderLabel(data)} />
       </div>
     </Field>
       </div>
