@@ -203,7 +203,7 @@ function legacyGender(r: Partial<CardData> & { gender?: unknown }): Pick<CardDat
   return old ? { genderMode: "custom", genderText: old } : { genderMode: "none", genderText: "" };
 }
 
-/** マイク ON 率の表示 (0% は無言勢) */
+/** マイク使用率の表示 (0% は無言勢) */
 export function micText(v: number) {
   return v === 0 ? "無言勢" : `${v}%`;
 }

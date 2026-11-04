@@ -170,13 +170,13 @@ export function usedStatuses(tags: Tag[]) {
 }
 
 /**
- * マイク ON 率。何の数字か分かるよう日本語のラベルと大きな数値で出す (バーは飾り)。
+ * マイク使用率。何の数字か分かるよう日本語のラベルと大きな数値で出す (バーは飾り)。
  * fill を付けると空いている幅いっぱいに広がり、バーも伸びる。
  */
 export function MicMeter({ value, color, track, fill = false, className = "", style }: { value: number; color: string; track: string; fill?: boolean; className?: string; style?: CSSProperties }) {
   return (
     <div className={`flex flex-col gap-1.5 ${fill ? "min-w-0 flex-1" : "shrink-0"} ${className}`} style={style}>
-      <span className="text-[15px] font-bold leading-none">マイクON率</span>
+      <span className="text-[15px] font-bold leading-none">マイク使用率</span>
       <div className="flex items-center gap-2.5">
         <span className={`relative h-[10px] overflow-hidden rounded-full ${fill ? "min-w-[40px] flex-1" : "w-[80px]"}`} style={{ background: track }}>
           <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${value}%`, background: color }} />

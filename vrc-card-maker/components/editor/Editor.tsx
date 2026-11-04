@@ -295,10 +295,10 @@ export default function Editor({ data, update }: { data: CardData; update: Updat
           </div>
         </div>
         <div className="space-y-3 rounded-xl border border-neutral-800 bg-black p-3">
-          <Slider label="マイクON率" value={data.mic} min={0} max={100} step={10} format={micText} onChange={(mic) => set({ mic })} />
+          <Slider label="マイク使用率" value={data.mic} min={0} max={100} step={10} format={micText} onChange={(mic) => set({ mic })} />
           <p className="text-[10px] leading-relaxed text-neutral-600">普段どれくらいマイクを ON にしているか。0% にすると「無言勢」と表示されます</p>
           <Check checked={data.showMic} onChange={(showMic) => set({ showMic })}>
-            カードにマイクON率を表示する
+            カードにマイク使用率を表示する
           </Check>
         </div>
       </Section>

@@ -90,7 +90,7 @@ export default function IdCard() {
       </div>
       {data.showMic && (
         <div className="flex items-center gap-2 text-[12px] font-bold">
-          マイクON率
+          マイク使用率
           <span className="relative h-[6px] flex-1 overflow-hidden rounded-sm" style={{ background: alpha(text, 0.12) }}>
             <span className="absolute inset-y-0 left-0" style={{ width: `${data.mic}%`, background: accent }} />
           </span>
