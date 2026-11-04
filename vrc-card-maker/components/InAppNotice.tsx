@@ -10,12 +10,8 @@ export function useInApp() {
   useEffect(() => {
     // 開発中に見た目を確かめるための切り替え (?inapp=android / ?inapp=ios)
     const debug = process.env.NODE_ENV !== "production" ? new URLSearchParams(location.search).get("inapp") : null;
-    const next = debug ? { inApp: true, android: debug === "android", app: "X" } : detectInApp(navigator.userAgent);
-    setInfo(next);
-    // Android のアプリ内ブラウザなら、開いたらすぐ普通のブラウザに切り替えを試みる。
-    // 切り替えられなかったときは openExternalBrowser 付きの URL に戻ってくるので、2回目は試さない (案内だけ出す)
-    const tried = new URLSearchParams(location.search).has("openExternalBrowser");
-    if (next.inApp && next.android && !tried && !debug) location.href = externalUrl(location.origin + location.pathname);
+    // 開いた直後に自動で外部ブラウザへ飛ばすのは、X では「実行できるアプリがありません」のエラーになるのでしない
+    setInfo(debug ? { inApp: true, android: debug === "android", app: "X" } : detectInApp(navigator.userAgent));
   }, []);
   return info;
 }
@@ -51,15 +47,21 @@ export default function InAppNotice({ info, compact = false }: { info: InAppInfo
           : "入力内容はブラウザに引き継げないので、作り始める前にブラウザで開き直してください。"}
       </p>
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        {info.android ? (
+        <p className="rounded-xl bg-black/30 px-3 py-2 text-[12px] font-bold leading-relaxed sm:col-span-2">
+          {info.android ? (
+            <>
+              画面下の URL の横にある <b className="text-amber-300">︙</b> から「<b className="text-amber-300">ブラウザで開く</b>」を選んでください
+            </>
+          ) : (
+            <>
+              画面の <b className="text-amber-300">…</b> や共有ボタンから「<b className="text-amber-300">ブラウザで開く</b>」「Safariで開く」を選んでください
+            </>
+          )}
+        </p>
+        {info.android && (
           <a href={externalUrl(url)} className="flex items-center justify-center gap-1.5 rounded-xl bg-amber-400 py-2.5 text-[14px] font-black text-black active:scale-95">
-            <ExternalLink size={16} /> ブラウザで開く
+            <ExternalLink size={16} /> Chromeで開く
           </a>
-        ) : (
-          <p className="rounded-xl bg-black/30 px-3 py-2 text-[12px] font-bold leading-relaxed">
-            画面の <b className="text-amber-300">…</b> や共有ボタンから
-            <br />「<b className="text-amber-300">ブラウザで開く</b>」「Safariで開く」を選んでください
-          </p>
         )}
         <button type="button" onClick={copy} className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-400/60 py-2.5 text-[13px] font-bold active:scale-95">
           {copied ? <Check size={15} /> : <Copy size={15} />}

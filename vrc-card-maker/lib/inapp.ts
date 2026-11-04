@@ -28,10 +28,13 @@ export function detectInApp(ua: string): InAppInfo {
   return { inApp: !!app || webview, android, app };
 }
 
-/** Android で Chrome などの普通のブラウザに開き直すための URL */
+/**
+ * Android で Chrome に開き直すための URL。
+ * 宛先を指定しない intent は X で「実行できるアプリがありません」になったので、Chrome を名指しする
+ */
 export function externalUrl(href: string) {
   const u = new URL(href);
   // LINE はこのパラメータで外部ブラウザを開く
   u.searchParams.set("openExternalBrowser", "1");
-  return `intent://${u.host}${u.pathname}${u.search}#Intent;scheme=https;S.browser_fallback_url=${encodeURIComponent(u.toString())};end`;
+  return `intent://${u.host}${u.pathname}${u.search}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(u.toString())};end`;
 }
