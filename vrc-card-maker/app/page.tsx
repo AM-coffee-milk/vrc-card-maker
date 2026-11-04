@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { AlertTriangle, Download, Loader2, RotateCcw, Share2, X } from "lucide-react";
 import Card from "@/components/card/Card";
 import Editor from "@/components/editor/Editor";
+import InAppNotice, { useInApp } from "@/components/InAppNotice";
 import { CARD_SIZE, defaultCard, normalizeCard, type CardData } from "@/lib/card";
 import { renderCard } from "@/lib/image";
 import { loadState, saveState } from "@/lib/storage";
@@ -20,6 +21,7 @@ export default function VRCCardMaker() {
   const [overflow, setOverflow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
+  const inApp = useInApp();
   const cardRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const { w, h } = CARD_SIZE[data.orientation];
@@ -116,6 +118,12 @@ export default function VRCCardMaker() {
         </button>
       </header>
 
+      {inApp?.inApp && (
+        <div className="mx-auto mb-5 max-w-[1440px] px-4 lg:px-8">
+          <InAppNotice info={inApp} />
+        </div>
+      )}
+
       <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 lg:flex-row lg:items-start lg:gap-8 lg:px-8">
         {/* プレビュー */}
         <div className="min-w-0 flex-1 lg:sticky lg:top-6">
@@ -184,6 +192,7 @@ export default function VRCCardMaker() {
                 <X size={20} />
               </button>
             </div>
+            {inApp?.inApp && <InAppNotice info={inApp} compact />}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={result.url} alt="生成された自己紹介カード" className="min-h-0 w-full flex-1 rounded-xl object-contain" />
             <p className="text-center text-[10px] text-neutral-500">スマホでは画像を長押しして保存することもできます</p>
