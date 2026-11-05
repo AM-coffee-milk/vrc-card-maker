@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Mono, Noto_Sans_JP, Oswald, Zen_Maru_Gothic } from "next/font/google";
 import "./globals.css";
-import { FAQ, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
+import { FAQ, MOBILE_POINTS, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 
 const noto = Noto_Sans_JP({ variable: "--font-noto", subsets: ["latin"], weight: ["400", "500", "700", "900"], display: "swap" });
 const maru = Zen_Maru_Gothic({ variable: "--font-maru", subsets: ["latin"], weight: ["500", "700", "900"], display: "swap" });
@@ -39,7 +39,9 @@ const jsonLd = {
       url: SITE_URL,
       description: SITE_DESCRIPTION,
       applicationCategory: "DesignApplication",
-      operatingSystem: "Web",
+      operatingSystem: "Web, iOS, Android",
+      browserRequirements: "スマホ・PC の最新ブラウザ（アプリのインストール不要）",
+      featureList: MOBILE_POINTS.map((p) => p.title),
       inLanguage: "ja",
       image: OG_IMAGE.url,
       isAccessibleForFree: true,

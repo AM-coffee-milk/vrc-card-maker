@@ -7,7 +7,7 @@ import Editor from "@/components/editor/Editor";
 import InAppNotice, { useInApp } from "@/components/InAppNotice";
 import { CARD_SIZE, defaultCard, normalizeCard, type CardData } from "@/lib/card";
 import { renderCard } from "@/lib/image";
-import { FAQ, FEATURES, HOW_TO } from "@/lib/site";
+import { FAQ, FEATURES, HOW_TO, MOBILE_POINTS } from "@/lib/site";
 import { loadState, saveState } from "@/lib/storage";
 
 interface Result {
@@ -175,10 +175,21 @@ export default function VRCCardMaker() {
 
       {/* サイトの説明 (使い方・できること・よくある質問)。検索エンジンや AI にも読まれる */}
       <section className="mx-auto mt-16 max-w-3xl px-4 text-neutral-300 lg:px-8">
-        <h2 className="text-lg font-black text-white">VRChatの自己紹介カードを、無料・登録なしで</h2>
+        <h2 className="text-lg font-black text-white">VRChatの自己紹介カードを、スマホで手軽に。無料・登録なし</h2>
         <p className="mt-3 text-[13px] leading-relaxed text-neutral-400">
-          VRC IDENTITY GEN は、VRChat 用の自己紹介カード（プロフィールカード）をブラウザで作れるツールです。写真を選んでプロフィールを書くだけで、X や Discord にそのまま貼れる画像ができます。PC でもスマホでも使えます。
+          VRC IDENTITY GEN は、VRChat 用の自己紹介カード（プロフィールカード）をブラウザで作れるツールです。写真を選んでプロフィールを書くだけで、X や Discord にそのまま貼れる画像ができます。スマホでの操作を前提に作っているので、アプリを入れなくてもスマホのブラウザだけで最後まで作れます。もちろん PC でも使えます。
         </p>
+
+        <h2 className="mt-10 text-base font-black text-white">スマホで作りやすいポイント</h2>
+        <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+          {MOBILE_POINTS.map((p) => (
+            <li key={p.title} className="rounded-xl border border-neutral-800 p-3 text-[13px] leading-relaxed">
+              <b className="text-white">{p.title}</b>
+              <br />
+              <span className="text-neutral-400">{p.text}</span>
+            </li>
+          ))}
+        </ul>
 
         <h2 className="mt-10 text-base font-black text-white">使い方</h2>
         <ol className="mt-3 space-y-3">
