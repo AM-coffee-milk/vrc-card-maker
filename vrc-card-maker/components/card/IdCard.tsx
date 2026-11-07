@@ -2,7 +2,7 @@
 
 // ID CARD: カード型のきっちり系
 
-import { STATUS_INFO, genderLabel, STATUS_ORDER, alpha, contrastOn, micText } from "@/lib/card";
+import { STATUS_INFO, genderLabel, STATUS_ORDER, alpha, contrastOn, micText, formatXId } from "@/lib/card";
 import { FitText, FriendStamp, NameText, MainPhoto, SubPhoto, activeTags, useCard } from "./parts";
 
 function hash(s: string) {
@@ -48,10 +48,10 @@ export default function IdCard() {
   const serial = String(hash(data.name) % 1000000).padStart(6, "0");
   const today = new Date();
   const issued = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
-  const latinSrc = (data.xId.replace(/^@/, "") || data.name).toUpperCase().replace(/[^A-Z0-9]/g, "<");
+  const latinSrc = (formatXId(data.xId).slice(1) || data.name).toUpperCase().replace(/[^A-Z0-9]/g, "<");
   const latin = /[A-Z0-9]/.test(latinSrc) ? latinSrc : "UNKNOWN";
   const mrz = `IDVRC<${latin}<<${data.platforms.join("<").toUpperCase()}`.padEnd(44, "<").slice(0, 44);
-  const xId = data.xId ? (data.xId.startsWith("@") ? data.xId : `@${data.xId}`) : "";
+  const xId = formatXId(data.xId);
 
   const photo = (
     <div className={`relative shrink-0 overflow-hidden rounded-lg ${portrait ? "h-[270px] w-[204px]" : data.photoMode ? "h-[244px] w-[244px]" : "h-[286px] w-[220px]"}`} style={{ border: `1px solid ${alpha(text, 0.25)}`, background: alpha(text, 0.06) }}>

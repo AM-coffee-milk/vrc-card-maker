@@ -4,7 +4,7 @@
 
 import { createContext, useContext, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { ImageIcon } from "lucide-react";
-import { FRIEND_INFO, STATUS_INFO, STATUS_ORDER, micText, type CardData, type PhotoFrame, type Status, type Tag } from "@/lib/card";
+import { FRIEND_INFO, STATUS_INFO, STATUS_ORDER, micText, formatXId, type CardData, type PhotoFrame, type Status, type Tag } from "@/lib/card";
 
 interface CardCtx {
   data: CardData;
@@ -190,7 +190,7 @@ export function MicMeter({ value, color, track, fill = false, className = "", st
 /** 入力済みのプロフィール項目。wide は横幅いっぱいに使う (好きなものは長くなりやすい) */
 export function infoRows(d: CardData) {
   return [
-    { key: "x", label: "X", ja: "X", value: d.xId ? (d.xId.startsWith("@") ? d.xId : `@${d.xId}`) : "", wide: true },
+    { key: "x", label: "X", ja: "X", value: formatXId(d.xId), wide: true },
     { key: "weekday", label: "Weekday", ja: "平日", value: d.activeTime, wide: false },
     { key: "holiday", label: "Holiday", ja: "休日", value: d.activeHoliday, wide: false },
     { key: "fav", label: "Favorite", ja: "すきなもの", value: d.favorites, wide: true },

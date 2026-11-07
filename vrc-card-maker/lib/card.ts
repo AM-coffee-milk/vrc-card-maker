@@ -224,3 +224,13 @@ export function contrastOn(hex: string) {
   const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
   return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#14161f" : "#ffffff";
 }
+
+/** X の ID を「@id」の形にそろえる。全角の＠・@の重ね打ち・プロフィール URL の貼り付けも受け付ける */
+export function formatXId(raw: string): string {
+  const id = raw
+    .trim()
+    .replace(/^(https?:\/\/)?(www\.|mobile\.)?(x|twitter)\.com\//i, "")
+    .replace(/[?#/].*$/, "")
+    .replace(/^[@＠\s]+/, "");
+  return id ? `@${id}` : "";
+}
