@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Mono, Noto_Sans_JP, Oswald, Zen_Maru_Gothic } from "next/font/google";
 import "./globals.css";
+import { inAppBootScript } from "@/lib/inapp";
 import { FAQ, MOBILE_POINTS, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 
 const noto = Noto_Sans_JP({ variable: "--font-noto", subsets: ["latin"], weight: ["400", "500", "700", "900"], display: "swap" });
@@ -60,8 +61,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ja">
+    // 起動スクリプトが <html> に属性を付けるので、その差は React に無視させる
+    <html lang="ja" suppressHydrationWarning>
       <body className={`${noto.variable} ${maru.variable} ${oswald.variable} ${mono.variable} font-sans antialiased`}>
+        {/* 画面を描く前にアプリ内ブラウザ判定と前回のカードの向きを <html> に付ける (後から差し込むとページがずれるため) */}
+        <script dangerouslySetInnerHTML={{ __html: inAppBootScript(process.env.NODE_ENV !== "production") }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
         {children}
         {/* 閲覧数の集計 (Cloudflare Web Analytics、Cookie なし)。開発中は数えない */}

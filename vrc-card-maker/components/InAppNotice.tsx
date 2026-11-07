@@ -21,10 +21,14 @@ export function useInApp() {
  * X などのアプリ内ブラウザでは画像を保存できないことが多いので、普通のブラウザで開き直してもらう。
  * アプリ内ブラウザとブラウザは保存場所が別で、入力内容は引き継げないため「作る前に」と伝える。
  */
-export default function InAppNotice({ info, compact = false }: { info: InAppInfo; compact?: boolean }) {
+/**
+ * info を渡さないときは、<html> に付いた判定結果 (lib/inapp.ts の inAppBootScript) を CSS で読んで表示を切り替える。
+ * ページ上部の案内はこちらを使い、最初の HTML から場所を確保しておく
+ */
+export default function InAppNotice({ info, compact = false }: { info?: InAppInfo; compact?: boolean }) {
   const [copied, setCopied] = useState(false);
   const url = typeof location !== "undefined" ? location.origin + location.pathname : "";
-  const where = info.app ? `${info.app}のアプリ内` : "アプリ内のブラウザ";
+  const where = info ? (info.app ? `${info.app}のアプリ内` : "アプリ内のブラウザ") : <span className="inapp-where" />;
 
   const copy = async () => {
     try {
@@ -40,7 +44,7 @@ export default function InAppNotice({ info, compact = false }: { info: InAppInfo
     <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 p-4 text-amber-50">
       <p className="flex items-start gap-2 text-[14px] font-black leading-snug">
         <AlertTriangle size={18} className="mt-[1px] shrink-0 text-amber-400" />
-        {where}では画像を保存できません
+        <span>{where}では画像を保存できません</span>
       </p>
       <p className="mt-1.5 text-[12px] font-bold leading-relaxed text-amber-100/80">
         {compact
@@ -49,14 +53,15 @@ export default function InAppNotice({ info, compact = false }: { info: InAppInfo
       </p>
       <div className="mt-3 flex flex-col gap-2">
         <p className="rounded-xl bg-black/30 px-3 py-2.5 text-[13px] font-bold leading-relaxed">
-          {info.android ? (
-            <>
+          {(!info || info.android) && (
+            <span className={info ? undefined : "inapp-android"}>
               画面下の URL の横にある <b className="text-amber-300">︙</b> から<b className="whitespace-nowrap text-amber-300">「ブラウザで開く」</b>を選んでください
-            </>
-          ) : (
-            <>
+            </span>
+          )}
+          {(!info || !info.android) && (
+            <span className={info ? undefined : "inapp-ios"}>
               画面の <b className="text-amber-300">…</b> や共有ボタンから<b className="whitespace-nowrap text-amber-300">「ブラウザで開く」</b>「Safariで開く」を選んでください
-            </>
+            </span>
           )}
         </p>
         <button type="button" onClick={copy} className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-400/60 py-2.5 text-[13px] font-bold active:scale-95">

@@ -56,3 +56,33 @@ input[type="color"].swatch::-moz-color-swatch {
   border: 2px solid #404040;
   border-radius: 9999px;
 }
+
+/* アプリ内ブラウザ向けの案内。<html data-inapp> は layout.tsx の起動スクリプトが描画前に付ける */
+html:not([data-inapp]) .inapp-only,
+html:not([data-inapp="android"]) .inapp-android,
+html[data-inapp="android"] .inapp-ios {
+  display: none;
+}
+.inapp-where::before {
+  content: var(--inapp-where, "アプリ内のブラウザ");
+}
+
+/* 読み込み中のプレビュー枠。page.tsx の縮小計算 (スマホは画面の高さの62%、PC は高さ-140px まで) と同じ大きさ */
+.preview-ph {
+  aspect-ratio: 16 / 9;
+  width: min(100%, 62vh * 16 / 9);
+  width: min(100%, 62dvh * 16 / 9);
+}
+html[data-orient="portrait"] .preview-ph {
+  aspect-ratio: 9 / 16;
+  width: min(100%, 62vh * 9 / 16);
+  width: min(100%, 62dvh * 9 / 16);
+}
+@media (min-width: 1024px) {
+  .preview-ph {
+    width: min(100%, (100dvh - 140px) * 16 / 9, 1920px);
+  }
+  html[data-orient="portrait"] .preview-ph {
+    width: min(100%, (100dvh - 140px) * 9 / 16, 1080px);
+  }
+}

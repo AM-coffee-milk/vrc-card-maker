@@ -8,6 +8,7 @@ import InAppNotice, { useInApp } from "@/components/InAppNotice";
 import { CARD_SIZE, defaultCard, normalizeCard, type CardData } from "@/lib/card";
 import { renderCard } from "@/lib/image";
 import { FAQ, FEATURES, HOW_TO, MOBILE_POINTS } from "@/lib/site";
+import { ORIENT_KEY } from "@/lib/inapp";
 import { loadState, saveState } from "@/lib/storage";
 
 interface Result {
@@ -40,7 +41,13 @@ export default function VRCCardMaker() {
   // 自動保存 (入力が落ち着いてから)
   useEffect(() => {
     if (!loaded) return;
-    const t = setTimeout(() => saveState(data), 400);
+    const t = setTimeout(() => {
+      saveState(data);
+      // 次に開いたとき、読み込み中の枠を最初から縦型 / 横型の大きさにするため (layout.tsx の起動スクリプトが読む)
+      try {
+        localStorage.setItem(ORIENT_KEY, data.orientation);
+      } catch {}
+    }, 400);
     return () => clearTimeout(t);
   }, [data, loaded]);
 
@@ -122,11 +129,10 @@ export default function VRCCardMaker() {
         </button>
       </header>
 
-      {inApp?.inApp && (
-        <div className="mx-auto mb-5 max-w-[1440px] px-4 lg:px-8">
-          <InAppNotice info={inApp} />
-        </div>
-      )}
+      {/* アプリ内ブラウザ向けの案内。表示はスクリプトと CSS で決める (後から差し込むとページがずれるため) */}
+      <div className="inapp-only mx-auto mb-5 max-w-[1440px] px-4 lg:px-8">
+        <InAppNotice />
+      </div>
 
       <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 lg:flex-row lg:items-start lg:gap-8 lg:px-8">
         {/* プレビュー */}
@@ -139,7 +145,8 @@ export default function VRCCardMaker() {
                 </div>
               </div>
             ) : (
-              <div className="flex aspect-video w-full items-center justify-center rounded-3xl bg-neutral-900 text-neutral-600">
+              // 読み込み後のカードと同じ大きさで場所を取っておく (globals.css の .preview-ph)
+              <div className="preview-ph flex items-center justify-center rounded-3xl bg-neutral-900 text-neutral-600">
                 <Loader2 className="animate-spin" />
               </div>
             )}
@@ -166,8 +173,10 @@ export default function VRCCardMaker() {
               {busy ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
               {busy ? "生成中…" : "画像を保存する"}
             </button>
-            {/* 保存データの復元前に編集されると上書きされるので、読み込み後に表示する */}
-            {loaded && <Editor data={data} update={update} />}
+            {/* 読み込み前から出して場所を確保し (後から出すと下の説明がずれる)、復元が終わるまでは触れないようにする */}
+            <div inert={!loaded}>
+              <Editor data={data} update={update} />
+            </div>
           </div>
           <p className="mt-6 text-center text-[10px] text-neutral-700">VRC IDENTITY GEN ・ 写真と入力内容はお使いの端末内だけで処理され、外部には送信されません（閲覧数のみ Cloudflare Web Analytics で集計しています。Cookie は使いません）</p>
         </aside>
